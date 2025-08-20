@@ -18,6 +18,7 @@ use crate::{
         button::Button,
         camera::Camera,
         collision_system::collisions::{Colliding, Collisions, Side},
+        effect_system::effect::Effect,
         game_info::GameInfo,
         game_object::{game_objects::GameObjectEnum, GameObject, SuperGameObject},
         game_state::StateInfo,
@@ -32,6 +33,7 @@ pub struct Bud<'g> {
     bud_data: Rc<RefCell<BudData<'g>>>,
     hovered: bool,
     pressed: bool,
+    effects: Vec<Rc<RefCell<dyn Effect<'g> + 'g>>>,
 }
 impl<'g> Bud<'g> {
     pub fn new(position: Point, initial_blud_data: Rc<InitialBudData<'g>>) -> Self {
@@ -40,9 +42,18 @@ impl<'g> Bud<'g> {
             bud_data: Rc::new(RefCell::new(BudData::default(initial_blud_data))),
             hovered: false,
             pressed: false,
+            effects: vec![],
         }
     }
     pub fn move_bud(&mut self, delta_time: f32) {}
+    pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect<'g> + 'g>>) {
+        self.effects.push(eff);
+    }
+    pub fn apply_effects(&mut self) {
+        self.effects
+            .iter()
+            .for_each(|eff| eff.borrow().apply(Rc::clone(&self.bud_data)));
+    }
 }
 
 impl<'g> GameObject<'g> for Bud<'g> {

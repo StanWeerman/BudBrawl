@@ -1,21 +1,12 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::game::game_object::game_objects::bud::Bud;
+use crate::game::game_object::game_objects::bud::{Bud, BudData};
 
-pub struct Tile {
-    effects: Vec<Rc<RefCell<dyn Effect>>>,
-}
-impl Tile {
-    pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect>>) {
-        self.effects.push(eff);
-    }
-    pub fn get_effects(&mut self) -> Vec<Rc<RefCell<dyn Effect>>> {
-        self.effects.retain(|eff| eff.borrow().is_active());
-        return self.effects.clone();
-    }
+pub struct Tile<'g> {
+    effects: Vec<Rc<RefCell<dyn Effect<'g> + 'g>>>,
 }
 
-pub trait Effect {
+pub trait Effect<'g> {
     fn is_active(&self) -> bool;
-    fn apply(&self, bud: &mut Bud);
+    fn apply(&self, bud: Rc<RefCell<BudData<'g>>>);
 }
