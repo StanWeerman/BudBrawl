@@ -1,7 +1,7 @@
 use std::{cell::RefCell, cmp, collections::HashMap, hash::Hash, rc::Rc};
 
 use crate::game::{
-    game_info::GameInfo, game_object::game_objects::ship::ShipData, game_state::GameState,
+    game_info::GameInfo, game_object::game_objects::bud::BudData, game_state::GameState,
     menu::menu_state::MenuState,
 };
 
@@ -33,7 +33,7 @@ impl<'g> MenuStateHandler<'g> {
 
     pub fn add_menu_states(&mut self, gi: &mut GameInfo<'g>) {
         self.menu_states
-            .insert(MenuStateEnum::Ship(None), Box::new(ShipState::new(gi)));
+            .insert(MenuStateEnum::Bud(None), Box::new(ShipState::new(gi)));
     }
 
     pub fn load_menu(&mut self, new_state: MenuStateEnum<'g>) {
@@ -75,7 +75,7 @@ impl<'g> MenuStateHandler<'g> {
 }
 
 pub enum MenuStateEnum<'g> {
-    Ship(Option<Rc<RefCell<ShipData<'g>>>>),
+    Bud(Option<Rc<RefCell<BudData<'g>>>>),
 }
 
 impl<'g> Hash for MenuStateEnum<'g> {
