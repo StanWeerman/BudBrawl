@@ -48,29 +48,35 @@ impl<'g> Bud<'g> {
         }
     }
     pub fn move_bud(&mut self, gi: &mut GameInfo<'g>, delta_time: f32) {
-        if gi.input.is_pressed(Keycode::Up) && !self.moved[0] {
-            self.moved[0] = true;
-            self.position.y -= 1;
-        } else if gi.input.is_released(Keycode::Up) {
-            self.moved[0] = false;
-        }
-        if gi.input.is_pressed(Keycode::Down) && !self.moved[1] {
-            self.moved[1] = true;
-            self.position.y += 1
-        } else if gi.input.is_released(Keycode::Down) {
-            self.moved[1] = false;
-        }
-        if gi.input.is_pressed(Keycode::Left) && !self.moved[2] {
-            self.moved[2] = true;
-            self.position.x -= 1;
-        } else if gi.input.is_released(Keycode::Left) {
-            self.moved[2] = false;
-        }
-        if gi.input.is_pressed(Keycode::Right) && !self.moved[3] {
-            self.moved[3] = true;
-            self.position.x += 1;
-        } else if gi.input.is_released(Keycode::Right) {
-            self.moved[3] = false;
+        if self.bud_data.borrow().speed > 0 {
+            if gi.input.is_pressed(Keycode::Up) && !self.moved[0] {
+                self.moved[0] = true;
+                self.position.y -= 1;
+                self.bud_data.borrow_mut().speed -= 1;
+            } else if gi.input.is_released(Keycode::Up) {
+                self.moved[0] = false;
+            }
+            if gi.input.is_pressed(Keycode::Down) && !self.moved[1] {
+                self.moved[1] = true;
+                self.position.y += 1;
+                self.bud_data.borrow_mut().speed -= 1;
+            } else if gi.input.is_released(Keycode::Down) {
+                self.moved[1] = false;
+            }
+            if gi.input.is_pressed(Keycode::Left) && !self.moved[2] {
+                self.moved[2] = true;
+                self.position.x -= 1;
+                self.bud_data.borrow_mut().speed -= 1;
+            } else if gi.input.is_released(Keycode::Left) {
+                self.moved[2] = false;
+            }
+            if gi.input.is_pressed(Keycode::Right) && !self.moved[3] {
+                self.moved[3] = true;
+                self.position.x += 1;
+                self.bud_data.borrow_mut().speed -= 1;
+            } else if gi.input.is_released(Keycode::Right) {
+                self.moved[3] = false;
+            }
         }
     }
     pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect<'g> + 'g>>) {
@@ -124,7 +130,9 @@ impl<'g> GameObject<'g> for Bud<'g> {
         // level_info: &mut LevelInfo<'g>,
     ) -> bool {
         self.move_bud(gi, _delta_time);
-
+        if gi.input.is_pressed(Keycode::Return) {
+            println!("Next Turn!");
+        }
         true
     }
 }
