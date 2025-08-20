@@ -9,20 +9,19 @@ use crate::game::{
     game_state::{game_states::GameStateEnum, GameState},
 };
 
-pub struct HomeState<'h> {
+pub struct SelectState<'h> {
     buttons: Vec<MenuButton<GameInfo<'h>>>,
-    color: sdl2::pixels::Color,
 }
 
-impl<'g> HomeState<'g> {
-    pub fn new(color: &sdl2::pixels::Color) -> Self {
+impl<'g> SelectState<'g> {
+    pub fn new() -> Self {
         // println!("Making Home");
         let mut buttons = Vec::new();
         buttons.push(MenuButton::new(
             Rect::new(100, 100, 100, 200),
             "Start",
             Box::new(|gi: &mut GameInfo| {
-                gi.game_state_handler.new_state(GameStateEnum::Select);
+                gi.game_state_handler.new_state(GameStateEnum::Arena);
             }),
         ));
         // buttons.push(MenuButton::new(
@@ -32,20 +31,17 @@ impl<'g> HomeState<'g> {
         //         gi.game_state_handler.new_state(GameStateEnum::Testing);
         //     }),
         // ));
-        Self {
-            buttons,
-            color: color.clone(),
-        }
+        Self { buttons }
     }
     pub fn new_state(state: &GameStateEnum) -> Box<dyn GameState<'g> + 'g> {
         match state {
-            GameStateEnum::Home(color) => Box::new(Self::new(color)),
+            GameStateEnum::Select => Box::new(Self::new()),
             _ => unreachable!(),
         }
     }
 }
 
-impl<'g> GameState<'g> for HomeState<'g> {
+impl<'g> GameState<'g> for SelectState<'g> {
     // fn start(
     //     &mut self,
     //     gi: &mut &GameInfo<'g>,
@@ -60,8 +56,8 @@ impl<'g> GameState<'g> for HomeState<'g> {
             button.press(&mouse_state, gi, None);
             button.draw(canvas, &gi.camera);
         }
-        canvas.set_draw_color(self.color);
+        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 255, 0));
         canvas.draw_rect(Rect::new(10, 10, 100, 100));
-        canvas.string(0, 0, "Home", self.color);
+        canvas.string(0, 0, "Select", sdl2::pixels::Color::RGB(0, 255, 0));
     }
 }

@@ -1,13 +1,14 @@
 use std::{cmp, collections::HashMap, hash::Hash};
 
-use crate::game::game_state::{game_states::zoom_test::ZoomState, GameState};
+use crate::game::game_state::GameState;
 
+pub mod arena_state;
 pub mod home_state;
-pub mod testing_state;
-pub mod zoom_test;
+pub mod select_state;
 
+use arena_state::ArenaState;
 use home_state::HomeState;
-use testing_state::TestingState;
+use select_state::SelectState;
 
 pub struct GameStateHandler<'g> {
     pub game_state_fns:
@@ -26,8 +27,8 @@ impl<'g> GameStateHandler<'g> {
             GameStateEnum::Home(sdl2::pixels::Color::RGB(0, 0, 255)),
             Box::new(HomeState::new_state),
         );
-        game_state_fns.insert(GameStateEnum::Testing, Box::new(TestingState::new_state));
-        game_state_fns.insert(GameStateEnum::Zoom, Box::new(ZoomState::new_state));
+        game_state_fns.insert(GameStateEnum::Arena, Box::new(ArenaState::new_state));
+        game_state_fns.insert(GameStateEnum::Select, Box::new(SelectState::new_state));
 
         GameStateHandler {
             new_state: None,
@@ -56,8 +57,8 @@ impl<'g> GameStateHandler<'g> {
 #[derive(Eq)]
 pub enum GameStateEnum {
     Home(sdl2::pixels::Color),
-    Zoom,
-    Testing,
+    Select,
+    Arena,
 }
 
 // impl Eq for GameStateEnum {}

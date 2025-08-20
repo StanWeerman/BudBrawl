@@ -17,10 +17,7 @@ use crate::{
         collision_system::collisions::Collisions,
         game_info::GameInfo,
         game_object::{
-            game_objects::{
-                ground::Ground,
-                ship::{InitialShipData, Ship},
-            },
+            game_objects::{bud::Bud, ground::Ground},
             GameObject,
         },
         game_state::{game_states::GameStateEnum, GameState, StateInfo},
@@ -30,7 +27,7 @@ use crate::{
     vector2d::Vector2d,
 };
 
-pub struct TestingState<'g> {
+pub struct ArenaState<'g> {
     button: MenuButton<GameInfo<'g>>,
     scene_manager: SceneManager<'g>,
     si: StateInfo<'g>,
@@ -39,7 +36,7 @@ pub struct TestingState<'g> {
     view: View,
 }
 
-impl<'g> TestingState<'g> {
+impl<'g> ArenaState<'g> {
     pub fn new() -> Self {
         Self {
             scene_manager: SceneManager::new(),
@@ -58,16 +55,14 @@ impl<'g> TestingState<'g> {
         }
     }
     pub fn new_state(state: &GameStateEnum) -> Box<dyn GameState<'g> + 'g> {
-        let ret: Box<dyn GameState<'g>> = Box::new(Self::new());
-        ret
-        // match state {
-        //     GameStateEnum::Testing => Box::new(Self::new()),
-        //     _ => unreachable!(),
-        // }
+        match state {
+            GameStateEnum::Arena => Box::new(Self::new()),
+            _ => unreachable!(),
+        }
     }
 }
 
-impl<'g> GameState<'g> for TestingState<'g> {
+impl<'g> GameState<'g> for ArenaState<'g> {
     fn start(
         &mut self,
         gi: &mut GameInfo<'g>,
@@ -94,19 +89,17 @@ impl<'g> GameState<'g> for TestingState<'g> {
                 .unwrap(),
         );
 
-        let ship_data = Rc::new(InitialShipData::default(Rc::clone(&tex)));
-        let mut ship = Ship::new(Vector2d::new(0.0, 0.0), Rc::clone(&ship_data));
-        ship.rotate_points();
-        let _ship = Rc::new(RefCell::new(ship));
-        let __ship = Rc::clone(&_ship);
-        self.collisions.add(__ship);
-        self.scene_manager.add(_ship);
-        let mut ship = Ship::new(Vector2d::new(100.0, 200.0), Rc::clone(&ship_data));
-        ship.rotate_points();
-        let _ship = Rc::new(RefCell::new(ship));
-        let __ship = Rc::clone(&_ship);
-        self.collisions.add(__ship);
-        self.scene_manager.add(_ship);
+        let mut bud = Bud::new(Point::new(0, 0));
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        // self.collisions.add(__bud);
+        self.scene_manager.add(_bud);
+        // let mut ship = Ship::new(Vector2d::new(100.0, 200.0), Rc::clone(&ship_data));
+        // ship.rotate_points();
+        // let _ship = Rc::new(RefCell::new(ship));
+        // let __ship = Rc::clone(&_ship);
+        // self.collisions.add(__ship);
+        // self.scene_manager.add(_ship);
 
         self.msh.add_menu_states(gi);
     }
@@ -144,6 +137,8 @@ impl<'g> GameState<'g> for TestingState<'g> {
             gi.camera.window_scale() as u32,
         ));
         self.si.add_objects(&mut self.scene_manager);
+
+        canvas.string(0, 0, "Home", sdl2::pixels::Color::RGB(0, 255, 0));
     }
 }
 

@@ -5,13 +5,13 @@ use sdl2::{rect::Rect, render::Canvas, video::Window};
 use crate::game::{
     button::{Button, MenuButton},
     game_info::GameInfo,
-    game_object::game_objects::ship::{Ship, ShipData},
+    game_object::game_objects::bud::{Bud, BudData},
     menu::menu_state::{menu_states::MenuStateEnum, MenuState},
 };
 
 pub struct ShipState<'g> {
-    buttons: Vec<MenuButton<Rc<RefCell<ShipData<'g>>>>>,
-    ship_data: Option<Rc<RefCell<ShipData<'g>>>>,
+    buttons: Vec<MenuButton<Rc<RefCell<BudData<'g>>>>>,
+    ship_data: Option<Rc<RefCell<BudData<'g>>>>,
 }
 
 impl<'g> ShipState<'g> {
@@ -20,15 +20,15 @@ impl<'g> ShipState<'g> {
         buttons.push(MenuButton::new(
             Rect::new(0, 50, 100, 100),
             "Right",
-            Box::new(|ship_data: &mut Rc<RefCell<ShipData<'g>>>| {
-                ship_data.borrow_mut().turn(1.0);
+            Box::new(|bud_data: &mut Rc<RefCell<BudData<'g>>>| {
+                // bud_data.borrow_mut().turn(1.0);
             }),
         ));
         buttons.push(MenuButton::new(
             Rect::new(0, 150, 100, 100),
             "Left",
             Box::new(|ship_data| {
-                ship_data.borrow_mut().turn(-1.0);
+                // ship_data.borrow_mut().turn(-1.0);
             }),
         ));
 
@@ -36,21 +36,21 @@ impl<'g> ShipState<'g> {
             Rect::new(0, 250, 100, 100),
             "Gas",
             Box::new(|ship_data| {
-                ship_data.borrow_mut().gas(1.0);
+                // ship_data.borrow_mut().gas(1.0);
             }),
         ));
         buttons.push(MenuButton::new(
             Rect::new(0, 350, 100, 100),
             "Brake",
             Box::new(|ship_data| {
-                ship_data.borrow_mut().gas(-1.0);
+                // ship_data.borrow_mut().gas(-1.0);
             }),
         ));
         buttons.push(MenuButton::new(
             Rect::new(0, 450, 100, 100),
             "GO!",
             Box::new(|ship_data| {
-                ship_data.borrow_mut().go();
+                // ship_data.borrow_mut().go();
             }),
         ));
         Self {
@@ -68,7 +68,7 @@ impl<'g> MenuState<'g> for ShipState<'g> {
         menu_state_enum: &MenuStateEnum<'g>,
     ) {
         match menu_state_enum {
-            MenuStateEnum::Ship(ship_data) => {
+            MenuStateEnum::Bud(ship_data) => {
                 if let Some(ship_data) = ship_data {
                     if self.ship_data.is_some() {
                         self.ship_data.as_ref().unwrap().borrow_mut().unselect();
