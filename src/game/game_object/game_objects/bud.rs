@@ -35,6 +35,7 @@ pub struct Bud<'g> {
     pressed: bool,
     effects: Vec<Rc<RefCell<dyn Effect<'g> + 'g>>>,
     moved: [bool; 4],
+    active: bool,
 }
 impl<'g> Bud<'g> {
     pub fn new(position: Point, initial_blud_data: Rc<InitialBudData<'g>>) -> Self {
@@ -45,38 +46,48 @@ impl<'g> Bud<'g> {
             pressed: false,
             effects: vec![],
             moved: [false, false, false, false],
+            active: false,
         }
     }
-    pub fn move_bud(&mut self, gi: &mut GameInfo<'g>, delta_time: f32) {
+    pub fn decide_move(&mut self, gi: &mut GameInfo<'g>, delta_time: f32) {
         if self.bud_data.borrow().speed > 0 {
-            if gi.input.is_pressed(Keycode::Up) && !self.moved[0] {
+            let mut moving = Point::new(0, 0);
+            if gi.input.is_pressed(Keycode::W) && !self.moved[0] {
                 self.moved[0] = true;
-                self.position.y -= 1;
-                self.bud_data.borrow_mut().speed -= 1;
-            } else if gi.input.is_released(Keycode::Up) {
+                moving.x = 0;
+                moving.y = -1;
+            } else if gi.input.is_released(Keycode::W) {
                 self.moved[0] = false;
             }
-            if gi.input.is_pressed(Keycode::Down) && !self.moved[1] {
+            if gi.input.is_pressed(Keycode::S) && !self.moved[1] {
                 self.moved[1] = true;
-                self.position.y += 1;
-                self.bud_data.borrow_mut().speed -= 1;
-            } else if gi.input.is_released(Keycode::Down) {
+                moving.x = 0;
+                moving.y = 1;
+            } else if gi.input.is_released(Keycode::S) {
                 self.moved[1] = false;
             }
-            if gi.input.is_pressed(Keycode::Left) && !self.moved[2] {
+            if gi.input.is_pressed(Keycode::A) && !self.moved[2] {
                 self.moved[2] = true;
-                self.position.x -= 1;
-                self.bud_data.borrow_mut().speed -= 1;
-            } else if gi.input.is_released(Keycode::Left) {
+                moving.x = -1;
+                moving.y = 0;
+            } else if gi.input.is_released(Keycode::A) {
                 self.moved[2] = false;
             }
-            if gi.input.is_pressed(Keycode::Right) && !self.moved[3] {
+            if gi.input.is_pressed(Keycode::D) && !self.moved[3] {
                 self.moved[3] = true;
-                self.position.x += 1;
-                self.bud_data.borrow_mut().speed -= 1;
-            } else if gi.input.is_released(Keycode::Right) {
+                moving.x = 1;
+                moving.y = 0;
+            } else if gi.input.is_released(Keycode::D) {
                 self.moved[3] = false;
             }
+            println!("{}, {}", moving.x, moving.y);
+            self.move_bud(moving, delta_time);
+        }
+    }
+    pub fn move_bud(&mut self, moving: Point, delta_time: f32) {
+        if moving.x != 0 || moving.y != 0 {
+            self.bud_data.borrow_mut().speed -= 1;
+            self.position += moving;
         }
     }
     pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect<'g> + 'g>>) {
@@ -121,6 +132,25 @@ impl<'g> GameObject<'g> for Bud<'g> {
 
         // canvas.draw_point(some_rect.top_left() + Point::new(10, 0));
     }
+    fn start(
+        &mut self,
+        _delta_time: f32,
+        collisions: &mut Collisions,
+        gi: &mut GameInfo<'g>,
+        si: &mut StateInfo<'g>,
+    ) -> bool {
+        self.active = true;
+        println!("Start Turn!");
+
+        self.apply_effects();
+        true
+    }
+    fn end(&mut self) -> bool {
+        self.active = false;
+        println!("End Turn!");
+        self.bud_data.borrow_mut().reset();
+        return true;
+    }
     fn update(
         &mut self,
         _delta_time: f32,
@@ -129,9 +159,8 @@ impl<'g> GameObject<'g> for Bud<'g> {
         si: &mut StateInfo<'g>,
         // level_info: &mut LevelInfo<'g>,
     ) -> bool {
-        self.move_bud(gi, _delta_time);
-        if gi.input.is_pressed(Keycode::Return) {
-            println!("Next Turn!");
+        if self.active {
+            self.decide_move(gi, _delta_time);
         }
         true
     }
@@ -206,7 +235,7 @@ impl<'g> BudData<'g> {
             initial,
             selected: false,
             health: 10,
-            speed: 1,
+            speed: 3,
         }
     }
 }
@@ -223,7 +252,7 @@ impl<'g> InitialBudData<'g> {
         InitialBudData {
             texture,
             max_health: 10,
-            max_speed: 1,
+            max_speed: 3,
         }
     }
 }

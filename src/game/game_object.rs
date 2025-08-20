@@ -85,6 +85,18 @@ pub trait GameObject<'g> {
         camera.rect_to_camera(&mut some_rect);
         canvas.draw_rect(some_rect);
     }
+    fn start(
+        &mut self,
+        _delta_time: f32,
+        collisions: &mut Collisions,
+        gi: &mut GameInfo<'g>,
+        si: &mut StateInfo<'g>,
+    ) -> bool {
+        true
+    }
+    fn end(&mut self) -> bool {
+        true
+    }
     fn update(
         &mut self,
         _delta_time: f32,
