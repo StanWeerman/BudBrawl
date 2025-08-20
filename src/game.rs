@@ -11,6 +11,7 @@ use sdl2::{
     video::{Window, WindowContext},
 };
 
+pub mod effect_system;
 pub mod game_object;
 
 pub mod collision_system;
