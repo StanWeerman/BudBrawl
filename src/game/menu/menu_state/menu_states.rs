@@ -32,8 +32,10 @@ impl<'g> MenuStateHandler<'g> {
     }
 
     pub fn add_menu_states(&mut self, gi: &mut GameInfo<'g>) {
-        self.menu_states
-            .insert(MenuStateEnum::Bud(None, None), Box::new(BudState::new(gi)));
+        self.menu_states.insert(
+            MenuStateEnum::Bud(BudEnum::LeftBud(None)),
+            Box::new(BudState::new(gi)),
+        );
     }
 
     pub fn load_menu(&mut self, new_state: MenuStateEnum<'g>) {
@@ -50,7 +52,7 @@ impl<'g> MenuStateHandler<'g> {
         delta_time: f32,
         canvas: &mut Canvas<Window>,
     ) {
-        self.not_ready = false;
+        // self.not_ready = false;
         if let Some(menu_state_enum) = &self.state {
             if let Some(menu_state) = self.menu_states.get_mut(menu_state_enum) {
                 if self.new_state {
@@ -60,25 +62,26 @@ impl<'g> MenuStateHandler<'g> {
                 self.not_ready = menu_state.run(gi, delta_time, canvas);
             }
         }
-        if !self.not_ready && self.press && !gi.input.mouse_state.left() && !self.new_state_wait {
-            // self.new_state = true;
-            if let Some(menu_state_enum) = &self.state {
-                if let Some(menu_state) = self.menu_states.get_mut(menu_state_enum) {
-                    menu_state.quit(gi, delta_time, canvas);
-                }
-            }
-            self.state = None;
-        }
-        self.press = gi.input.mouse_state.left();
-        self.new_state_wait = false;
+        // if !self.not_ready && self.press && !gi.input.mouse_state.left() && !self.new_state_wait {
+        //     // self.new_state = true;
+        //     if let Some(menu_state_enum) = &self.state {
+        //         if let Some(menu_state) = self.menu_states.get_mut(menu_state_enum) {
+        //             menu_state.quit(gi, delta_time, canvas);
+        //         }
+        //     }
+        //     self.state = None;
+        // }
+        // self.press = gi.input.mouse_state.left();
+        // self.new_state_wait = false;
     }
 }
 
 pub enum MenuStateEnum<'g> {
-    Bud(
-        Option<Rc<RefCell<BudData<'g>>>>,
-        Option<Rc<RefCell<BudData<'g>>>>,
-    ),
+    Bud(BudEnum<'g>),
+}
+pub enum BudEnum<'g> {
+    LeftBud(Option<Rc<RefCell<BudData<'g>>>>),
+    RightBud(Option<Rc<RefCell<BudData<'g>>>>),
 }
 
 impl<'g> Hash for MenuStateEnum<'g> {

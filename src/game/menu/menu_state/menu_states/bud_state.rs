@@ -6,7 +6,10 @@ use crate::game::{
     button::{Button, MenuButton},
     game_info::GameInfo,
     game_object::game_objects::bud::{Bud, BudData},
-    menu::menu_state::{menu_states::MenuStateEnum, MenuState},
+    menu::menu_state::{
+        menu_states::{BudEnum, MenuStateEnum},
+        MenuState,
+    },
 };
 
 pub struct BudState<'g> {
@@ -80,26 +83,30 @@ impl<'g> MenuState<'g> for BudState<'g> {
         menu_state_enum: &MenuStateEnum<'g>,
     ) {
         match menu_state_enum {
-            MenuStateEnum::Bud(bud_data_left, bud_data_right) => {
-                if let Some(bud_data) = bud_data_left {
-                    if self.bud_data_left.is_some() {
-                        self.bud_data_left.as_ref().unwrap().borrow_mut().unselect();
+            MenuStateEnum::Bud(bud_enum) => match bud_enum {
+                BudEnum::LeftBud(bud_data_left) => {
+                    if let Some(bud_data) = bud_data_left {
+                        if self.bud_data_left.is_some() {
+                            self.bud_data_left.as_ref().unwrap().borrow_mut().unselect();
+                        }
+                        self.bud_data_left = Some(Rc::clone(bud_data));
+                        self.bud_data_left.as_ref().unwrap().borrow_mut().select();
                     }
-                    self.bud_data_left = Some(Rc::clone(bud_data));
-                    self.bud_data_left.as_ref().unwrap().borrow_mut().select();
                 }
-                if let Some(bud_data) = bud_data_right {
-                    if self.bud_data_right.is_some() {
-                        self.bud_data_right
-                            .as_ref()
-                            .unwrap()
-                            .borrow_mut()
-                            .unselect();
+                BudEnum::RightBud(bud_data_right) => {
+                    if let Some(bud_data) = bud_data_right {
+                        if self.bud_data_right.is_some() {
+                            self.bud_data_right
+                                .as_ref()
+                                .unwrap()
+                                .borrow_mut()
+                                .unselect();
+                        }
+                        self.bud_data_right = Some(Rc::clone(bud_data));
+                        self.bud_data_right.as_ref().unwrap().borrow_mut().select();
                     }
-                    self.bud_data_right = Some(Rc::clone(bud_data));
-                    self.bud_data_right.as_ref().unwrap().borrow_mut().select();
                 }
-            }
+            },
             _ => unreachable!(),
         }
     }
