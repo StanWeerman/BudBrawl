@@ -171,29 +171,29 @@ impl View {
         );
 
         if gi.input.is_pressed(Keycode::W) {
-            position.y -= 0.06 * delta_time * scale as f32;
+            position.y -= 0.01 * delta_time * scale as f32;
         }
         if gi.input.is_pressed(Keycode::S) {
-            position.y += 0.06 * delta_time * scale as f32;
+            position.y += 0.01 * delta_time * scale as f32;
         }
         if gi.input.is_pressed(Keycode::A) {
-            position.x -= 0.06 * delta_time * scale as f32;
+            position.x -= 0.01 * delta_time * scale as f32;
         }
         if gi.input.is_pressed(Keycode::D) {
-            position.x += 0.06 * delta_time * scale as f32;
+            position.x += 0.01 * delta_time * scale as f32;
         }
-        if gi.input.is_pressed(Keycode::Up) && self.do_zoom_out {
-            scale *= 2;
-            self.do_zoom_out = false;
-        } else if gi.input.is_released(Keycode::Up) {
-            self.do_zoom_out = true;
-        }
-        if gi.input.is_pressed(Keycode::Down) && scale > 1 && self.do_zoom_in {
-            scale /= 2;
-            self.do_zoom_in = false
-        } else if gi.input.is_released(Keycode::Down) {
-            self.do_zoom_in = true;
-        }
+        // if gi.input.is_pressed(Keycode::Up) && self.do_zoom_out {
+        //     scale *= 2;
+        //     self.do_zoom_out = false;
+        // } else if gi.input.is_released(Keycode::Up) {
+        //     self.do_zoom_out = true;
+        // }
+        // if gi.input.is_pressed(Keycode::Down) && scale > 1 && self.do_zoom_in {
+        //     scale /= 2;
+        //     self.do_zoom_in = false
+        // } else if gi.input.is_released(Keycode::Down) {
+        //     self.do_zoom_in = true;
+        // }
         // gi.camera.position = position;
         // gi.camera.scale = scale;
         let blocks = gi.camera.blocks();

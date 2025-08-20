@@ -33,6 +33,7 @@ fn get_keys() -> HashMap<Keycode, KeyState> {
             Keycode::Num1,
             Keycode::Num2,
             Keycode::Space,
+            Keycode::Return,
         ],
     );
     return key_map;
