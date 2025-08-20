@@ -17,7 +17,10 @@ use crate::{
         collision_system::collisions::Collisions,
         game_info::GameInfo,
         game_object::{
-            game_objects::{bud::Bud, ground::Ground},
+            game_objects::{
+                bud::{Bud, InitialBudData},
+                ground::Ground,
+            },
             GameObject,
         },
         game_state::{game_states::GameStateEnum, GameState, StateInfo},
@@ -85,11 +88,13 @@ impl<'g> GameState<'g> for ArenaState<'g> {
 
         let tex = Rc::new(
             gi.texture_creator
-                .load_texture(&"../../../assets/fletcher.png")
+                .load_texture(&"../assets/fletcher.png")
                 .unwrap(),
         );
 
-        let mut bud = Bud::new(Point::new(0, 0));
+        let initial_bud_data = Rc::new(InitialBudData::default(tex));
+
+        let mut bud = Bud::new(Point::new(0, 0), initial_bud_data);
         let _bud = Rc::new(RefCell::new(bud));
         let __bud = Rc::clone(&_bud);
         // self.collisions.add(__bud);

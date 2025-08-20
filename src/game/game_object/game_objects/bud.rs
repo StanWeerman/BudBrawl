@@ -27,15 +27,17 @@ use crate::{
     vector2d::Vector2d,
 };
 
-pub struct Bud {
+pub struct Bud<'g> {
     position: Point,
+    bud_data: Rc<RefCell<BudData<'g>>>,
     hovered: bool,
     pressed: bool,
 }
-impl Bud {
-    pub fn new(position: Point) -> Self {
+impl<'g> Bud<'g> {
+    pub fn new(position: Point, initial_blud_data: Rc<InitialBudData<'g>>) -> Self {
         Self {
             position,
+            bud_data: Rc::new(RefCell::new(BudData::default(initial_blud_data))),
             hovered: false,
             pressed: false,
         }
@@ -43,7 +45,7 @@ impl Bud {
     pub fn move_bud(&mut self, delta_time: f32) {}
 }
 
-impl<'g> GameObject<'g> for Bud {
+impl<'g> GameObject<'g> for Bud<'g> {
     fn get_position(&self) -> Vector2d {
         Vector2d::new(self.position.x as f32, self.position.y as f32)
     }
@@ -89,7 +91,7 @@ impl<'g> GameObject<'g> for Bud {
     }
 }
 
-impl<'g> Button<'g> for Bud {
+impl<'g> Button<'g> for Bud<'g> {
     fn get_pressed(&self) -> (bool, bool) {
         (self.hovered, self.pressed)
     }
@@ -129,7 +131,7 @@ impl<'g> Button<'g> for Bud {
 }
 
 pub struct BudData<'g> {
-    texture: Rc<Texture<'g>>,
+    initial: Rc<InitialBudData<'g>>,
     selected: bool,
     health: u16,
     speed: u16,
@@ -141,5 +143,25 @@ impl<'g> BudData<'g> {
     }
     pub fn unselect(&mut self) {
         self.selected = false;
+    }
+
+    fn default(initial: Rc<InitialBudData<'g>>) -> BudData<'g> {
+        BudData {
+            initial,
+            selected: false,
+            health: 10,
+            speed: 1,
+        }
+    }
+}
+
+pub struct InitialBudData<'g> {
+    texture: Rc<Texture<'g>>,
+    // traits:
+}
+
+impl<'g> InitialBudData<'g> {
+    pub fn default(texture: Rc<Texture<'g>>) -> InitialBudData {
+        InitialBudData { texture }
     }
 }
