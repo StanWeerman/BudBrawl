@@ -34,6 +34,7 @@ pub struct Bud<'g> {
     hovered: bool,
     pressed: bool,
     effects: Vec<Rc<RefCell<dyn Effect<'g> + 'g>>>,
+    moved: [bool; 4],
 }
 impl<'g> Bud<'g> {
     pub fn new(position: Point, initial_blud_data: Rc<InitialBudData<'g>>) -> Self {
@@ -43,9 +44,35 @@ impl<'g> Bud<'g> {
             hovered: false,
             pressed: false,
             effects: vec![],
+            moved: [false, false, false, false],
         }
     }
-    pub fn move_bud(&mut self, delta_time: f32) {}
+    pub fn move_bud(&mut self, gi: &mut GameInfo<'g>, delta_time: f32) {
+        if gi.input.is_pressed(Keycode::Up) && !self.moved[0] {
+            self.moved[0] = true;
+            self.position.y -= 1;
+        } else if gi.input.is_released(Keycode::Up) {
+            self.moved[0] = false;
+        }
+        if gi.input.is_pressed(Keycode::Down) && !self.moved[1] {
+            self.moved[1] = true;
+            self.position.y += 1
+        } else if gi.input.is_released(Keycode::Down) {
+            self.moved[1] = false;
+        }
+        if gi.input.is_pressed(Keycode::Left) && !self.moved[2] {
+            self.moved[2] = true;
+            self.position.x -= 1;
+        } else if gi.input.is_released(Keycode::Left) {
+            self.moved[2] = false;
+        }
+        if gi.input.is_pressed(Keycode::Right) && !self.moved[3] {
+            self.moved[3] = true;
+            self.position.x += 1;
+        } else if gi.input.is_released(Keycode::Right) {
+            self.moved[3] = false;
+        }
+    }
     pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect<'g> + 'g>>) {
         self.effects.push(eff);
     }
@@ -96,7 +123,7 @@ impl<'g> GameObject<'g> for Bud<'g> {
         si: &mut StateInfo<'g>,
         // level_info: &mut LevelInfo<'g>,
     ) -> bool {
-        self.move_bud(_delta_time);
+        self.move_bud(gi, _delta_time);
 
         true
     }
