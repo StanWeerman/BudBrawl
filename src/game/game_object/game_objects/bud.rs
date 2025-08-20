@@ -33,7 +33,7 @@ pub struct Bud<'g> {
     bud_data: Rc<RefCell<BudData<'g>>>,
     hovered: bool,
     pressed: bool,
-    effects: Vec<Rc<RefCell<dyn Effect>>>,
+    effects: Vec<Rc<RefCell<dyn Effect<'g> + 'g>>>,
 }
 impl<'g> Bud<'g> {
     pub fn new(position: Point, initial_blud_data: Rc<InitialBudData<'g>>) -> Self {
@@ -46,11 +46,13 @@ impl<'g> Bud<'g> {
         }
     }
     pub fn move_bud(&mut self, delta_time: f32) {}
-    pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect>>) {
+    pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect<'g> + 'g>>) {
         self.effects.push(eff);
     }
     pub fn apply_effects(&mut self) {
-        self.effects.apply(self);
+        self.effects
+            .iter()
+            .for_each(|eff| eff.borrow().apply(Rc::clone(&self.bud_data)));
     }
 }
 
