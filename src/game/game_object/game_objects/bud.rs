@@ -108,6 +108,10 @@ impl<'g> Button<'g> for Bud<'g> {
         todo!()
     }
 
+    fn hover_action(&mut self, input: &mut Self::Input) {
+        println!("Hovered");
+    }
+
     fn action(&mut self, input: &mut Self::Input) {
         // input.load_menu(MenuStateEnum::Ship(Some(Rc::clone(&self.ship_data))));
         println!("Pressed");

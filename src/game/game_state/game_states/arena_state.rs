@@ -80,15 +80,10 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             .create_texture_streaming(PixelFormatEnum::RGB24, X_SIZE, Y_SIZE)
             .map_err(|e| e.to_string())
             .unwrap();
-        self.scene_manager.add(Rc::new(RefCell::new(Ground::new(
-            Vector2d::new(0 as f32, 0 as f32),
-            2,
-            texture,
-        ))));
 
         let tex = Rc::new(
             gi.texture_creator
-                .load_texture(&"../assets/fletcher.png")
+                .load_texture(&"assets/fletcher.png")
                 .unwrap(),
         );
 
@@ -143,7 +138,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         ));
         self.si.add_objects(&mut self.scene_manager);
 
-        canvas.string(0, 0, "Home", sdl2::pixels::Color::RGB(0, 255, 0));
+        canvas.string(0, 0, "Arena", sdl2::pixels::Color::RGB(0, 255, 0));
     }
 }
 

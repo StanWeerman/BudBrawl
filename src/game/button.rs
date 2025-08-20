@@ -19,6 +19,7 @@ pub trait Button<'b> {
     fn set_hovered(&mut self, hovered: bool);
     fn set_pressed(&mut self, pressed: bool);
     fn get_draw_values(&self) -> (Rect, &str);
+    fn hover_action(&mut self, input: &mut Self::Input) {}
     fn action(&mut self, input: &mut Self::Input);
     fn draw(&self, canvas: &mut Canvas<Window>, camera: &Camera) {
         let (pressed, hovered) = self.get_pressed();
@@ -55,6 +56,7 @@ pub trait Button<'b> {
         let bounds = self.in_bounds(m.x(), m.y(), camera);
         if bounds {
             self.set_hovered(true);
+            self.hover_action(button_input);
         }
         if m.left() && !pressed && bounds {
             self.set_pressed(true);
