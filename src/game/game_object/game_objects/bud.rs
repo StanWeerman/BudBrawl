@@ -23,7 +23,7 @@ use crate::{
         game_object::{game_objects::GameObjectEnum, GameObject, SuperGameObject},
         game_state::StateInfo,
         input::Input,
-        menu::menu_state::menu_states::{MenuStateEnum, MenuStateHandler},
+        menu::menu_state::menu_states::{BudEnum, MenuStateEnum, MenuStateHandler},
     },
     vector2d::Vector2d,
 };
@@ -188,12 +188,16 @@ impl<'g> Button<'g> for Bud<'g> {
     }
 
     fn hover_action(&mut self, input: &mut Self::Input) {
-        input.load_menu(MenuStateEnum::Bud(None, Some(Rc::clone(&self.bud_data))));
+        input.load_menu(MenuStateEnum::Bud(BudEnum::RightBud(Some(Rc::clone(
+            &self.bud_data,
+        )))));
         println!("Hovered");
     }
 
     fn action(&mut self, input: &mut Self::Input) {
-        input.load_menu(MenuStateEnum::Bud(Some(Rc::clone(&self.bud_data)), None));
+        input.load_menu(MenuStateEnum::Bud(BudEnum::LeftBud(Some(Rc::clone(
+            &self.bud_data,
+        )))));
         println!("Pressed");
     }
 
