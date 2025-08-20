@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::game::game_object::game_objects::bud::Bud;
+use crate::game::game_object::game_objects::bud::{Bud, BudData};
 
 pub struct Tile {
     effects: Vec<Rc<RefCell<dyn Effect>>>,
@@ -17,5 +17,5 @@ impl Tile {
 
 pub trait Effect {
     fn is_active(&self) -> bool;
-    fn apply(&self, bud: &mut Bud);
+    fn apply(&self, bud: &mut BudData);
 }
