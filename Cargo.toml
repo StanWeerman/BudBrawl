@@ -1,0 +1,12 @@
+[package]
+name = "bud_brawl"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libnoise = "1.2.0"
+
+[dependencies.sdl2]
+version = "0.35.2"
+default-features = false
+features = ["image", "gfx", "mixer"]
