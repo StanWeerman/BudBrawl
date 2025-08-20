@@ -50,13 +50,17 @@ pub trait Button<'b> {
         camera: Option<&Camera>,
     ) -> (bool, bool) {
         // camera.rect_scaled_to_camera(&mut self.rect);
-        let (_, pressed) = self.get_pressed();
-        self.set_hovered(false);
+        let (hovered, pressed) = self.get_pressed();
+        // self.set_hovered(hovered);
         let m = mouse_state;
         let bounds = self.in_bounds(m.x(), m.y(), camera);
         if bounds {
             self.set_hovered(true);
-            self.hover_action(button_input);
+            if hovered == false {
+                self.hover_action(button_input);
+            }
+        } else {
+            self.set_hovered(false);
         }
         if m.left() && !pressed && bounds {
             self.set_pressed(true);

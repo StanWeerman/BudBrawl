@@ -5,10 +5,10 @@ use crate::game::{
     menu::menu_state::MenuState,
 };
 
-pub mod ship_state;
+pub mod bud_state;
 
+use bud_state::BudState;
 use sdl2::{render::Canvas, video::Window, EventPump};
-use ship_state::ShipState;
 
 pub struct MenuStateHandler<'g> {
     pub menu_states: HashMap<MenuStateEnum<'g>, Box<dyn MenuState<'g> + 'g>>,
@@ -33,7 +33,7 @@ impl<'g> MenuStateHandler<'g> {
 
     pub fn add_menu_states(&mut self, gi: &mut GameInfo<'g>) {
         self.menu_states
-            .insert(MenuStateEnum::Bud(None), Box::new(ShipState::new(gi)));
+            .insert(MenuStateEnum::Bud(None, None), Box::new(BudState::new(gi)));
     }
 
     pub fn load_menu(&mut self, new_state: MenuStateEnum<'g>) {
@@ -75,7 +75,10 @@ impl<'g> MenuStateHandler<'g> {
 }
 
 pub enum MenuStateEnum<'g> {
-    Bud(Option<Rc<RefCell<BudData<'g>>>>),
+    Bud(
+        Option<Rc<RefCell<BudData<'g>>>>,
+        Option<Rc<RefCell<BudData<'g>>>>,
+    ),
 }
 
 impl<'g> Hash for MenuStateEnum<'g> {

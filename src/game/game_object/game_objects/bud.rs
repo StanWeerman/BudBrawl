@@ -116,30 +116,33 @@ impl<'g> Button<'g> for Bud<'g> {
     }
 
     fn get_draw_values(&self) -> (Rect, &str) {
-        todo!()
+        todo!();
+        // (
+        //     Rect::from_center(camera.point_to_camera(&mut self.position.clone()), 10, 10),
+        //     "",
+        // )
     }
 
     fn hover_action(&mut self, input: &mut Self::Input) {
+        input.load_menu(MenuStateEnum::Bud(None, Some(Rc::clone(&self.bud_data))));
         println!("Hovered");
     }
 
     fn action(&mut self, input: &mut Self::Input) {
-        // input.load_menu(MenuStateEnum::Ship(Some(Rc::clone(&self.ship_data))));
+        input.load_menu(MenuStateEnum::Bud(Some(Rc::clone(&self.bud_data)), None));
         println!("Pressed");
     }
 
     fn in_bounds(&self, mouse_x: i32, mouse_y: i32, camera: Option<&Camera>) -> bool {
-        let mut ret = false;
-        let mut center = self.position.clone();
+        let mut rect = Rect::from_center(self.position, 10, 10);
+        // let mut center = self.position.clone();
         if let Some(camera) = camera {
-            camera.point_to_camera(&mut center);
+            // camera.point_to_camera(&mut center);
+            camera.rect_to_camera(&mut rect);
         }
-        let distance_squared =
-            (center.x as i32 - mouse_x).pow(2) + (center.y as i32 - mouse_y).pow(2);
-        if distance_squared < 100 {
-            return true;
-        }
-        ret
+        // let rect = Rect::from_center(center, 10, 10);
+        (mouse_x >= rect.left() && mouse_x <= rect.right())
+            && (mouse_y >= rect.top() && mouse_y <= rect.bottom())
     }
 
     type Input = MenuStateHandler<'g>;
@@ -159,6 +162,9 @@ impl<'g> BudData<'g> {
     pub fn unselect(&mut self) {
         self.selected = false;
     }
+    pub fn reset(&mut self) {
+        self.speed = self.initial.max_speed;
+    }
 
     fn default(initial: Rc<InitialBudData<'g>>) -> BudData<'g> {
         BudData {
@@ -172,6 +178,8 @@ impl<'g> BudData<'g> {
 
 pub struct InitialBudData<'g> {
     texture: Rc<Texture<'g>>,
+    max_health: u16,
+    max_speed: u16,
     // traits:
 }
 
