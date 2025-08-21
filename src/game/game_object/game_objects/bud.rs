@@ -251,15 +251,19 @@ pub struct InitialBudData<'g> {
     texture: Rc<Texture<'g>>,
     max_health: u16,
     max_speed: u16,
+    index: u8,
+    rounds: u64,
     // traits:
 }
 
 impl<'g> InitialBudData<'g> {
-    pub fn default(texture: Rc<Texture<'g>>) -> InitialBudData {
+    pub fn default(texture: Rc<Texture<'g>>, index: u8) -> InitialBudData {
         InitialBudData {
             texture,
             max_health: 10,
             max_speed: 3,
+            index,
+            rounds: 0,
         }
     }
 }

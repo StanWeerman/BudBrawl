@@ -1,7 +1,12 @@
 use std::{cell::RefCell, rc::Rc};
 
 use sdl2::{
-    gfx::primitives::DrawRenderer, keyboard::Keycode, rect::Rect, render::Canvas, video::Window,
+    gfx::primitives::DrawRenderer,
+    image::LoadTexture,
+    keyboard::Keycode,
+    rect::Rect,
+    render::{Canvas, Texture},
+    video::Window,
     EventPump,
 };
 
@@ -44,17 +49,43 @@ impl<'g> SelectState<'g> {
             _ => unreachable!(),
         }
     }
+    fn setup_buds(initial_buds: &mut Vec<InitialBudData<'g>>, tex: Rc<Texture<'g>>) {
+        while initial_buds.len() < 5 {
+            initial_buds.push(InitialBudData::default(
+                Rc::clone(&tex),
+                initial_buds.len() as u8,
+            ));
+        }
+    }
 }
 
 impl<'g> GameState<'g> for SelectState<'g> {
-    // fn start(
-    //     &mut self,
-    //     gi: &mut GameInfo<'g>,
-    //     delta_time: f32,
-    //     canvas: &mut Canvas<Window>,
-    //     event_pump: &mut EventPump,
-    // ) {
-    // }
+    fn start(
+        &mut self,
+        gi: &mut GameInfo<'g>,
+        delta_time: f32,
+        canvas: &mut Canvas<Window>,
+        event_pump: &mut EventPump,
+    ) {
+        let tex = Rc::new(
+            gi.texture_creator
+                .load_texture(&"assets/bud_2.png")
+                .unwrap(),
+        );
+        Self::setup_buds(&mut self.initial_buds_tuple.0, Rc::clone(&tex));
+        Self::setup_buds(&mut self.initial_buds_tuple.1, Rc::clone(&tex));
+        // while self.initial_buds_tuple.0.len() < 5 {
+        //     self.initial_buds_tuple.0.push(InitialBudData::default(
+        //         Rc::clone(&tex),
+        //         self.initial_buds_tuple.0.len() as u8,
+        //     ));
+        // }
+        // while self.initial_buds_tuple.1.len() < 5 {
+        //     self.initial_buds_tuple
+        //         .1
+        //         .push(InitialBudData::default(Rc::clone(&tex)));
+        // }
+    }
     fn run(&mut self, gi: &mut GameInfo<'g>, delta_time: f32, canvas: &mut Canvas<Window>) {
         let mouse_state = gi.input.mouse_state.clone();
         for button in self.buttons.iter_mut() {

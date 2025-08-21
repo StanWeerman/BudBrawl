@@ -104,48 +104,64 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         let _ground = Rc::new(RefCell::new(ground));
         self.scene_manager.add(_ground);
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
 
-        let mut bud = Bud::new(Point::new(0, 0), initial_bud_data);
-        let _bud = Rc::new(RefCell::new(bud));
-        let __bud = Rc::clone(&_bud);
-        self.turn_handler.add(__bud);
-        self.scene_manager.add(_bud);
+        for (i, initial_bud_data) in self.initial_buds_tuple.0.iter().enumerate() {
+            let mut bud = Bud::new(Point::new(0, i as i32), Rc::new(initial_bud_data.clone()));
+            let _bud = Rc::new(RefCell::new(bud));
+            let __bud = Rc::clone(&_bud);
+            self.turn_handler.add(__bud);
+            self.scene_manager.add(_bud);
+        }
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        let mut bud = Bud::new(Point::new(3, 2), initial_bud_data);
-        let _bud = Rc::new(RefCell::new(bud));
-        let __bud = Rc::clone(&_bud);
-        self.turn_handler.add(__bud);
-        self.scene_manager.add(_bud);
+        for (i, initial_bud_data) in self.initial_buds_tuple.1.iter().enumerate() {
+            let mut bud = Bud::new(Point::new(10, i as i32), Rc::new(initial_bud_data.clone()));
+            let _bud = Rc::new(RefCell::new(bud));
+            let __bud = Rc::clone(&_bud);
+            self.turn_handler.add(__bud);
+            self.scene_manager.add(_bud);
+        }
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        let mut bud = Bud::new(Point::new(4, 0), initial_bud_data);
-        let _bud = Rc::new(RefCell::new(bud));
-        let __bud = Rc::clone(&_bud);
-        self.turn_handler.add(__bud);
-        self.scene_manager.add(_bud);
+        // let mut bud = Bud::new(Point::new(0, 0), initial_bud_data);
+        // let _bud = Rc::new(RefCell::new(bud));
+        // let __bud = Rc::clone(&_bud);
+        // self.turn_handler.add(__bud);
+        // self.scene_manager.add(_bud);
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        let mut bud = Bud::new(Point::new(4, 2), initial_bud_data);
-        let _bud = Rc::new(RefCell::new(bud));
-        let __bud = Rc::clone(&_bud);
-        self.turn_handler.add(__bud);
-        self.scene_manager.add(_bud);
+        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        // let mut bud = Bud::new(Point::new(3, 2), initial_bud_data);
+        // let _bud = Rc::new(RefCell::new(bud));
+        // let __bud = Rc::clone(&_bud);
+        // self.turn_handler.add(__bud);
+        // self.scene_manager.add(_bud);
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        let mut bud = Bud::new(Point::new(4, 4), initial_bud_data);
-        let _bud = Rc::new(RefCell::new(bud));
-        let __bud = Rc::clone(&_bud);
-        self.turn_handler.add(__bud);
-        self.scene_manager.add(_bud);
+        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        // let mut bud = Bud::new(Point::new(4, 0), initial_bud_data);
+        // let _bud = Rc::new(RefCell::new(bud));
+        // let __bud = Rc::clone(&_bud);
+        // self.turn_handler.add(__bud);
+        // self.scene_manager.add(_bud);
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        let mut bud = Bud::new(Point::new(6, 4), initial_bud_data);
-        let _bud = Rc::new(RefCell::new(bud));
-        let __bud = Rc::clone(&_bud);
-        self.turn_handler.add(__bud);
-        self.scene_manager.add(_bud);
+        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        // let mut bud = Bud::new(Point::new(4, 2), initial_bud_data);
+        // let _bud = Rc::new(RefCell::new(bud));
+        // let __bud = Rc::clone(&_bud);
+        // self.turn_handler.add(__bud);
+        // self.scene_manager.add(_bud);
+
+        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        // let mut bud = Bud::new(Point::new(4, 4), initial_bud_data);
+        // let _bud = Rc::new(RefCell::new(bud));
+        // let __bud = Rc::clone(&_bud);
+        // self.turn_handler.add(__bud);
+        // self.scene_manager.add(_bud);
+
+        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        // let mut bud = Bud::new(Point::new(6, 4), initial_bud_data);
+        // let _bud = Rc::new(RefCell::new(bud));
+        // let __bud = Rc::clone(&_bud);
+        // self.turn_handler.add(__bud);
+        // self.scene_manager.add(_bud);
         // let mut ship = Ship::new(Vector2d::new(100.0, 200.0), Rc::clone(&ship_data));
         // ship.rotate_points();
         // let _ship = Rc::new(RefCell::new(ship));
