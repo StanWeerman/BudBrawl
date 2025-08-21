@@ -26,6 +26,7 @@ use crate::{
         game_state::{game_states::GameStateEnum, GameState, StateInfo},
         menu::menu_state::menu_states::MenuStateHandler,
         scene_manager::SceneManager,
+        turn_system::turns::TurnHandler,
     },
     vector2d::Vector2d,
 };
@@ -36,7 +37,9 @@ pub struct ArenaState<'g> {
     si: StateInfo<'g>,
     collisions: Collisions<'g>,
     msh: MenuStateHandler<'g>,
+    turn_handler: TurnHandler<'g>,
     view: View,
+    end_turn: bool,
     initial_buds_tuple: (Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>),
 }
 
@@ -55,8 +58,10 @@ impl<'g> ArenaState<'g> {
                 }),
             ),
             msh: MenuStateHandler::new(),
+            turn_handler: TurnHandler::new(),
             view: View::new(),
-            initial_buds_tuple,
+            end_turn: true,
+            initial_buds_tuple: initial_buds_tuple.clone(),
         }
     }
     pub fn new_state(state: &GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g> {
@@ -91,12 +96,47 @@ impl<'g> GameState<'g> for ArenaState<'g> {
                 .unwrap(),
         );
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex));
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
 
         let mut bud = Bud::new(Point::new(0, 0), initial_bud_data);
         let _bud = Rc::new(RefCell::new(bud));
         let __bud = Rc::clone(&_bud);
-        // self.collisions.add(__bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(3, 2), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(4, 0), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(4, 2), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(4, 4), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(6, 4), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
         self.scene_manager.add(_bud);
         // let mut ship = Ship::new(Vector2d::new(100.0, 200.0), Rc::clone(&ship_data));
         // ship.rotate_points();
@@ -108,6 +148,15 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         self.msh.add_menu_states(gi);
     }
     fn run(&mut self, gi: &mut GameInfo<'g>, delta_time: f32, canvas: &mut Canvas<Window>) {
+        //Handling the ending of a turn!
+        if self.end_turn && gi.input.is_pressed(Keycode::Return) {
+            self.turn_handler
+                .next_turn(delta_time, &mut self.collisions, gi, &mut self.si);
+            println!("?");
+            self.end_turn = false;
+        } else if gi.input.is_released(Keycode::Return) {
+            self.end_turn = true;
+        }
         let mouse_state = gi.input.mouse_state.clone();
         self.view.move_view(delta_time, gi);
         gi.camera.set_window(canvas);
@@ -179,16 +228,16 @@ impl View {
             position.y + blocks.1 as f32 / 2.0 * scale as f32,
         );
 
-        if gi.input.is_pressed(Keycode::W) {
+        if gi.input.is_pressed(Keycode::Up) {
             position.y -= 0.01 * delta_time * scale as f32;
         }
-        if gi.input.is_pressed(Keycode::S) {
+        if gi.input.is_pressed(Keycode::Down) {
             position.y += 0.01 * delta_time * scale as f32;
         }
-        if gi.input.is_pressed(Keycode::A) {
+        if gi.input.is_pressed(Keycode::Left) {
             position.x -= 0.01 * delta_time * scale as f32;
         }
-        if gi.input.is_pressed(Keycode::D) {
+        if gi.input.is_pressed(Keycode::Right) {
             position.x += 0.01 * delta_time * scale as f32;
         }
         // if gi.input.is_pressed(Keycode::Up) && self.do_zoom_out {
