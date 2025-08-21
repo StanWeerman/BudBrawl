@@ -122,7 +122,7 @@ impl<'g> GameObject<'g> for Bud<'g> {
 
         canvas.copy_ex(
             &self.bud_data.borrow().initial.texture,
-            None,
+            Rect::new(0, 0, 14, 21),
             some_rect,
             0.0,
             None,
