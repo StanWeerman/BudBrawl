@@ -199,14 +199,12 @@ impl<'g> Button<'g> for Bud<'g> {
         input.load_menu(MenuStateEnum::Bud(BudEnum::RightBud(Some(Rc::clone(
             &self.bud_data,
         )))));
-        println!("Hovered");
     }
 
     fn action(&mut self, input: &mut Self::Input) {
         // input.load_menu(MenuStateEnum::Bud(BudEnum::LeftBud(Some(Rc::clone(
         //     &self.bud_data,
         // )))));
-        // println!("Pressed");
     }
 
     fn in_bounds(&self, mouse_x: i32, mouse_y: i32, camera: Option<&Camera>) -> bool {
@@ -261,7 +259,7 @@ pub struct InitialBudData<'g> {
     pub team: u8,
     rounds: u64,
     traits: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
-    name: String,
+    pub name: String,
 }
 
 impl<'g> InitialBudData<'g> {

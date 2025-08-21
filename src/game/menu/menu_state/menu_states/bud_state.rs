@@ -124,7 +124,13 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 button.draw(canvas, &gi.camera);
             }
             canvas.string(
-                800,
+                200,
+                750,
+                &bud_data.borrow().initial.name,
+                sdl2::pixels::Color::RGB(0, 0, 0),
+            );
+            canvas.string(
+                200,
                 800,
                 &format!(
                     "Team {} | Bud {}",
@@ -144,6 +150,12 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 }
                 button.draw(canvas, &gi.camera);
             }
+            canvas.string(
+                800,
+                750,
+                &bud_data.borrow().initial.name,
+                sdl2::pixels::Color::RGB(0, 0, 0),
+            );
             canvas.string(
                 800,
                 800,
