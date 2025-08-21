@@ -118,17 +118,17 @@ impl<'g> GameObject<'g> for Bud<'g> {
         let mut some_rect = Rect::from_center(self.position, 10, 10);
         camera.rect_to_camera(&mut some_rect);
 
-        // canvas.copy_ex(
-        //     &self.ship_data.borrow().initial.texture,
-        //     None,
-        //     some_rect,
-        //     self.ship_data.borrow().angle as f64,
-        //     None,
-        //     false,
-        //     false,
-        // );
-        canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 0, 0));
-        canvas.fill_rect(some_rect);
+        canvas.copy_ex(
+            &self.bud_data.borrow().initial.texture,
+            None,
+            some_rect,
+            0.0,
+            None,
+            // Point::new(self.position.x as i32 + 10, self.position.y as i32 + 10),
+            // some_rect.top_left() + Point::new(0, 0),
+            false,
+            false,
+        );
 
         // canvas.draw_point(some_rect.top_left() + Point::new(10, 0));
     }
