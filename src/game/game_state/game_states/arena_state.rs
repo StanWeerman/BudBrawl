@@ -107,8 +107,29 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         self.turn_handler.add(__bud);
         self.scene_manager.add(_bud);
 
-        let initial_bud_data = Rc::new(InitialBudData::default(tex));
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
         let mut bud = Bud::new(Point::new(4, 0), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(4, 2), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(4, 4), initial_bud_data);
+        let _bud = Rc::new(RefCell::new(bud));
+        let __bud = Rc::clone(&_bud);
+        self.turn_handler.add(__bud);
+        self.scene_manager.add(_bud);
+
+        let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
+        let mut bud = Bud::new(Point::new(6, 4), initial_bud_data);
         let _bud = Rc::new(RefCell::new(bud));
         let __bud = Rc::clone(&_bud);
         self.turn_handler.add(__bud);
