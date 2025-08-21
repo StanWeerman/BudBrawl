@@ -1,4 +1,11 @@
-use std::{cell::RefCell, rc::Rc};
+use rand::seq::IndexedRandom;
+use std::{
+    cell::RefCell,
+    fs::File,
+    io::{BufRead, BufReader},
+    path::Path,
+    rc::Rc,
+};
 
 use sdl2::{
     gfx::primitives::DrawRenderer,
@@ -49,12 +56,19 @@ impl<'g> SelectState<'g> {
             _ => unreachable!(),
         }
     }
-    fn setup_buds(initial_buds: &mut Vec<InitialBudData<'g>>, team: u8, tex: Rc<Texture<'g>>) {
+
+    fn setup_buds(
+        initial_buds: &mut Vec<InitialBudData<'g>>,
+        team: u8,
+        tex: Rc<Texture<'g>>,
+        name_generator: &NameGenerator,
+    ) {
         while initial_buds.len() < 5 {
             initial_buds.push(InitialBudData::default(
                 Rc::clone(&tex),
                 team,
                 initial_buds.len() as u8,
+                name_generator,
             ));
         }
     }
@@ -73,8 +87,20 @@ impl<'g> GameState<'g> for SelectState<'g> {
                 .load_texture(&"assets/bud_2.png")
                 .unwrap(),
         );
-        Self::setup_buds(&mut self.initial_buds_tuple.0, 0, Rc::clone(&tex));
-        Self::setup_buds(&mut self.initial_buds_tuple.1, 1, Rc::clone(&tex));
+        let name_generator = NameGenerator::new("assets/names/names.txt");
+
+        Self::setup_buds(
+            &mut self.initial_buds_tuple.0,
+            0,
+            Rc::clone(&tex),
+            &name_generator,
+        );
+        Self::setup_buds(
+            &mut self.initial_buds_tuple.1,
+            1,
+            Rc::clone(&tex),
+            &name_generator,
+        );
         // while self.initial_buds_tuple.0.len() < 5 {
         //     self.initial_buds_tuple.0.push(InitialBudData::default(
         //         Rc::clone(&tex),
@@ -99,5 +125,30 @@ impl<'g> GameState<'g> for SelectState<'g> {
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 255, 0));
         canvas.draw_rect(Rect::new(10, 10, 100, 100));
         canvas.string(0, 0, "Select", sdl2::pixels::Color::RGB(0, 255, 0));
+    }
+}
+
+pub struct NameGenerator {
+    names: Vec<String>,
+}
+
+impl NameGenerator {
+    fn new(file: impl AsRef<Path>) -> Self {
+        let names = NameGenerator::lines_from_file(file);
+        Self { names }
+    }
+    pub fn selectRandName(&self) -> String {
+        match self.names.choose(&mut rand::rng()) {
+            Some(i) => return i.to_string(),
+            None => return "Hello".to_string(),
+        }
+    }
+
+    fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
+        let file = File::open(filename).expect("no such file");
+        let buf = BufReader::new(file);
+        buf.lines()
+            .map(|l| l.expect("Could not parse line"))
+            .collect()
     }
 }
