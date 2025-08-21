@@ -90,7 +90,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             .map_err(|e| e.to_string())
             .unwrap();
 
-        let tex = Rc::new(gi.texture_creator.load_texture(&"assets/blud.png").unwrap());
+        let tex = Rc::new(gi.texture_creator.load_texture(&"assets/bud.png").unwrap());
         let ground_tex = gi
             .texture_creator
             .load_texture(&"assets/ground.png")
