@@ -21,7 +21,7 @@ use crate::{
         effect_system::effect::Effect,
         game_info::GameInfo,
         game_object::{game_objects::GameObjectEnum, GameObject, SuperGameObject},
-        game_state::StateInfo,
+        game_state::{game_states::select_state::NameGenerator, StateInfo},
         input::Input,
         menu::menu_state::menu_states::{BudEnum, MenuStateEnum, MenuStateHandler},
     },
@@ -80,7 +80,6 @@ impl<'g> Bud<'g> {
             } else if gi.input.is_released(Keycode::D) {
                 self.moved[3] = false;
             }
-            println!("{}, {}", moving.x, moving.y);
             self.move_bud(moving, delta_time);
         }
     }
@@ -142,7 +141,10 @@ impl<'g> GameObject<'g> for Bud<'g> {
         si: &mut StateInfo<'g>,
     ) -> bool {
         self.active = true;
-        println!("Start Turn!");
+        println!(
+            "Start Turn! This is bud {}.",
+            self.bud_data.borrow().initial.name
+        );
 
         self.apply_effects();
         true
@@ -253,17 +255,24 @@ pub struct InitialBudData<'g> {
     max_speed: u16,
     index: u8,
     rounds: u64,
+    name: String,
     // traits:
 }
 
 impl<'g> InitialBudData<'g> {
-    pub fn default(texture: Rc<Texture<'g>>, index: u8) -> InitialBudData {
+    pub fn default(
+        texture: Rc<Texture<'g>>,
+        index: u8,
+        name_generator: &NameGenerator,
+    ) -> InitialBudData<'g> {
+        let name = name_generator.selectRandName();
         InitialBudData {
             texture,
             max_health: 10,
             max_speed: 3,
             index,
             rounds: 0,
+            name,
         }
     }
 }
