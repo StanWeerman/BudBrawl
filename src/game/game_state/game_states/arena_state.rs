@@ -24,7 +24,9 @@ use crate::{
             GameObject,
         },
         game_state::{game_states::GameStateEnum, GameState, StateInfo},
-        menu::menu_state::menu_states::MenuStateHandler,
+        menu::menu_state::menu_states::{
+            bud_state::BudState, BudEnum, MenuStateEnum, MenuStateHandler,
+        },
         scene_manager::SceneManager,
         turn_system::turns::TurnHandler,
     },
@@ -124,54 +126,10 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             self.scene_manager.add(_bud);
         }
 
-        // let mut bud = Bud::new(Point::new(0, 0), initial_bud_data);
-        // let _bud = Rc::new(RefCell::new(bud));
-        // let __bud = Rc::clone(&_bud);
-        // self.turn_handler.add(__bud);
-        // self.scene_manager.add(_bud);
-
-        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        // let mut bud = Bud::new(Point::new(3, 2), initial_bud_data);
-        // let _bud = Rc::new(RefCell::new(bud));
-        // let __bud = Rc::clone(&_bud);
-        // self.turn_handler.add(__bud);
-        // self.scene_manager.add(_bud);
-
-        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        // let mut bud = Bud::new(Point::new(4, 0), initial_bud_data);
-        // let _bud = Rc::new(RefCell::new(bud));
-        // let __bud = Rc::clone(&_bud);
-        // self.turn_handler.add(__bud);
-        // self.scene_manager.add(_bud);
-
-        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        // let mut bud = Bud::new(Point::new(4, 2), initial_bud_data);
-        // let _bud = Rc::new(RefCell::new(bud));
-        // let __bud = Rc::clone(&_bud);
-        // self.turn_handler.add(__bud);
-        // self.scene_manager.add(_bud);
-
-        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        // let mut bud = Bud::new(Point::new(4, 4), initial_bud_data);
-        // let _bud = Rc::new(RefCell::new(bud));
-        // let __bud = Rc::clone(&_bud);
-        // self.turn_handler.add(__bud);
-        // self.scene_manager.add(_bud);
-
-        // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
-        // let mut bud = Bud::new(Point::new(6, 4), initial_bud_data);
-        // let _bud = Rc::new(RefCell::new(bud));
-        // let __bud = Rc::clone(&_bud);
-        // self.turn_handler.add(__bud);
-        // self.scene_manager.add(_bud);
-        // let mut ship = Ship::new(Vector2d::new(100.0, 200.0), Rc::clone(&ship_data));
-        // ship.rotate_points();
-        // let _ship = Rc::new(RefCell::new(ship));
-        // let __ship = Rc::clone(&_ship);
-        // self.collisions.add(__ship);
-        // self.scene_manager.add(_ship);
-
-        self.msh.add_menu_states(gi);
+        self.msh.add_menu_states(Box::new([(
+            MenuStateEnum::Bud(BudEnum::LeftBud(None)),
+            Box::new(BudState::new(gi)),
+        )]));
     }
     fn run(&mut self, gi: &mut GameInfo<'g>, delta_time: f32, canvas: &mut Canvas<Window>) {
         //Handling the ending of a turn!

@@ -1,11 +1,14 @@
 use std::{cell::RefCell, cmp, collections::HashMap, hash::Hash, rc::Rc};
 
 use crate::game::{
-    game_info::GameInfo, game_object::game_objects::bud::BudData, game_state::GameState,
+    game_info::GameInfo,
+    game_object::game_objects::bud::{BudData, InitialBudData},
+    game_state::GameState,
     menu::menu_state::MenuState,
 };
 
 pub mod bud_state;
+pub mod select_bud_state;
 
 use bud_state::BudState;
 use sdl2::{render::Canvas, video::Window, EventPump};
@@ -31,11 +34,13 @@ impl<'g> MenuStateHandler<'g> {
         }
     }
 
-    pub fn add_menu_states(&mut self, gi: &mut GameInfo<'g>) {
-        self.menu_states.insert(
-            MenuStateEnum::Bud(BudEnum::LeftBud(None)),
-            Box::new(BudState::new(gi)),
-        );
+    pub fn add_menu_states(
+        &mut self,
+        menu_tuples: Box<[(MenuStateEnum<'g>, Box<dyn MenuState<'g> + 'g>)]>,
+    ) {
+        for menu_tuple in menu_tuples {
+            self.menu_states.insert(menu_tuple.0, menu_tuple.1);
+        }
     }
 
     pub fn load_menu(&mut self, new_state: MenuStateEnum<'g>) {
@@ -78,6 +83,7 @@ impl<'g> MenuStateHandler<'g> {
 
 pub enum MenuStateEnum<'g> {
     Bud(BudEnum<'g>),
+    InitialBudDatas((u8, Rc<RefCell<Vec<InitialBudData<'g>>>>)),
 }
 pub enum BudEnum<'g> {
     LeftBud(Option<Rc<RefCell<BudData<'g>>>>),

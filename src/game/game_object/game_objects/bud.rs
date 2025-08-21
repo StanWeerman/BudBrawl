@@ -18,7 +18,7 @@ use crate::{
         button::Button,
         camera::Camera,
         collision_system::collisions::{Colliding, Collisions, Side},
-        effect_system::effect::Effect,
+        effect_system::effects::Effect,
         game_info::GameInfo,
         game_object::{game_objects::GameObjectEnum, GameObject, SuperGameObject},
         game_state::{game_states::select_state::NameGenerator, StateInfo},
@@ -272,7 +272,7 @@ pub struct InitialBudData<'g> {
     pub index: u8,
     pub team: u8,
     rounds: u64,
-    traits: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
+    effects: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
     pub name: String,
 }
 
@@ -292,7 +292,7 @@ impl<'g> InitialBudData<'g> {
             index,
             team,
             rounds: 0,
-            traits: [None, None, None],
+            effects: [None, None, None],
             name,
         }
     }

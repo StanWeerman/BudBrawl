@@ -22,18 +22,26 @@ use crate::game::{
     game_info::GameInfo,
     game_object::game_objects::bud::InitialBudData,
     game_state::{game_states::GameStateEnum, GameState},
+    menu::menu_state::menu_states::{
+        select_bud_state::SelectBudState, MenuStateEnum, MenuStateHandler,
+    },
 };
 
 pub struct SelectState<'g> {
     buttons: Vec<MenuButton<GameInfo<'g>>>,
-    initial_buds_tuple: (Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>),
+    initial_buds_tuple: (
+        Rc<RefCell<Vec<InitialBudData<'g>>>>,
+        Rc<RefCell<Vec<InitialBudData<'g>>>>,
+    ),
+    msh: MenuStateHandler<'g>,
 }
 
 impl<'g> SelectState<'g> {
     pub fn new(initial_buds_tuple: (Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>)) -> Self {
-        // println!("Making Home");
-        // let initial_buds_tuple_1 = Rc::new(RefCell::new(initial_buds_tuple.clone()));
-        // let initial_buds_tuple_2 = Rc::clone(&initial_buds_tuple);
+        let initial_buds_tuple = (
+            Rc::new(RefCell::new(initial_buds_tuple.0.clone())),
+            Rc::new(RefCell::new(initial_buds_tuple.1.clone())),
+        );
         let mut buttons = Vec::new();
         buttons.push(MenuButton::new(
             Rect::new(100, 100, 100, 200),
@@ -45,7 +53,8 @@ impl<'g> SelectState<'g> {
         ));
         Self {
             buttons,
-            initial_buds_tuple: initial_buds_tuple.clone(),
+            initial_buds_tuple,
+            msh: MenuStateHandler::new(),
         }
     }
     pub fn new_state(state: &GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g> {
@@ -90,41 +99,42 @@ impl<'g> GameState<'g> for SelectState<'g> {
         let name_generator = NameGenerator::new("assets/names/names.txt");
 
         Self::setup_buds(
-            &mut self.initial_buds_tuple.0,
+            &mut self.initial_buds_tuple.0.borrow_mut(),
             0,
             Rc::clone(&tex),
             &name_generator,
         );
         Self::setup_buds(
-            &mut self.initial_buds_tuple.1,
+            &mut self.initial_buds_tuple.1.borrow_mut(),
             1,
             Rc::clone(&tex),
             &name_generator,
         );
-        // while self.initial_buds_tuple.0.len() < 5 {
-        //     self.initial_buds_tuple.0.push(InitialBudData::default(
-        //         Rc::clone(&tex),
-        //         self.initial_buds_tuple.0.len() as u8,
-        //     ));
-        // }
-        // while self.initial_buds_tuple.1.len() < 5 {
-        //     self.initial_buds_tuple
-        //         .1
-        //         .push(InitialBudData::default(Rc::clone(&tex)));
-        // }
+        self.msh.add_menu_states(Box::new([(
+            MenuStateEnum::InitialBudDatas((1, Rc::new(RefCell::new(Vec::new())))),
+            Box::new(SelectBudState::new(gi)),
+        )]));
+        self.msh.load_menu(MenuStateEnum::InitialBudDatas((
+            0,
+            Rc::clone(&self.initial_buds_tuple.0),
+        )));
     }
     fn run(&mut self, gi: &mut GameInfo<'g>, delta_time: f32, canvas: &mut Canvas<Window>) {
         let mouse_state = gi.input.mouse_state.clone();
         for button in self.buttons.iter_mut() {
             if button.press(&mouse_state, gi, None).1 {
-                gi.game_state_handler
-                    .new_state(GameStateEnum::Arena(self.initial_buds_tuple.clone()));
+                gi.game_state_handler.new_state(GameStateEnum::Arena((
+                    self.initial_buds_tuple.0.borrow().clone(),
+                    self.initial_buds_tuple.1.borrow().clone(),
+                )));
             }
             button.draw(canvas, &gi.camera);
         }
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 255, 0));
         canvas.draw_rect(Rect::new(10, 10, 100, 100));
         canvas.string(0, 0, "Select", sdl2::pixels::Color::RGB(0, 255, 0));
+
+        self.msh.handle_state(gi, delta_time, canvas);
     }
 }
 
