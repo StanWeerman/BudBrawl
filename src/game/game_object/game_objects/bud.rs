@@ -115,14 +115,14 @@ impl<'g> GameObject<'g> for Bud<'g> {
     fn draw(&self, canvas: &mut Canvas<Window>, camera: &mut Camera) {
         // let (position, size) = self.get_draw_values();
         canvas.set_draw_color(Color::RGBA(139, 210, 241, 255));
-        let mut some_rect = Rect::from_center(self.position, 14, 21);
+        let mut some_rect = Rect::from_center(self.position, 16, 21);
         camera.rect_to_camera(&mut some_rect);
-        some_rect.x += (1.0 * camera.window_scale() / 2 as f32) as i32;
+        // some_rect.x += (1.0 * camera.window_scale() / 2 as f32) as i32;
         some_rect.y -= (8.0 * camera.window_scale() / 2 as f32) as i32;
 
         canvas.copy_ex(
             &self.bud_data.borrow().initial.texture,
-            None,
+            Rect::new(0, 0, 16, 21),
             some_rect,
             0.0,
             None,
