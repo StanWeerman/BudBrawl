@@ -91,6 +91,7 @@ pub trait GameObject<'g> {
         collisions: &mut Collisions,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
+        msh: &mut MenuStateHandler<'g>,
     ) -> bool {
         true
     }

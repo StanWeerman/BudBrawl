@@ -56,14 +56,17 @@ impl<'g> SelectState<'g> {
             _ => unreachable!(),
         }
     }
+
     fn setup_buds(
         initial_buds: &mut Vec<InitialBudData<'g>>,
+        team: u8,
         tex: Rc<Texture<'g>>,
         name_generator: &NameGenerator,
     ) {
         while initial_buds.len() < 5 {
             initial_buds.push(InitialBudData::default(
                 Rc::clone(&tex),
+                team,
                 initial_buds.len() as u8,
                 name_generator,
             ));
@@ -88,11 +91,13 @@ impl<'g> GameState<'g> for SelectState<'g> {
 
         Self::setup_buds(
             &mut self.initial_buds_tuple.0,
+            0,
             Rc::clone(&tex),
             &name_generator,
         );
         Self::setup_buds(
             &mut self.initial_buds_tuple.1,
+            1,
             Rc::clone(&tex),
             &name_generator,
         );
