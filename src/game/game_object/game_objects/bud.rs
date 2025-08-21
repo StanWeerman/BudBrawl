@@ -215,6 +215,7 @@ impl<'g> BudData<'g> {
     }
 }
 
+#[derive(Clone)]
 pub struct InitialBudData<'g> {
     texture: Rc<Texture<'g>>,
     max_health: u16,

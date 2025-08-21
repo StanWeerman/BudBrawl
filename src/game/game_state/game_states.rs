@@ -1,6 +1,6 @@
 use std::{cmp, collections::HashMap, hash::Hash};
 
-use crate::game::game_state::GameState;
+use crate::game::{game_object::game_objects::bud::InitialBudData, game_state::GameState};
 
 pub mod arena_state;
 pub mod home_state;
@@ -12,8 +12,8 @@ use select_state::SelectState;
 
 pub struct GameStateHandler<'g> {
     pub game_state_fns:
-        HashMap<GameStateEnum, Box<dyn Fn(&GameStateEnum) -> Box<dyn GameState<'g> + 'g>>>,
-    pub new_state: Option<GameStateEnum>,
+        HashMap<GameStateEnum<'g>, Box<dyn Fn(&GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g>>>,
+    pub new_state: Option<GameStateEnum<'g>>,
     pub game_state_string: String,
 }
 
@@ -21,13 +21,16 @@ impl<'g> GameStateHandler<'g> {
     pub fn new() -> GameStateHandler<'g> {
         let mut game_state_fns: HashMap<
             GameStateEnum,
-            Box<dyn Fn(&GameStateEnum) -> Box<dyn GameState<'g>>>,
+            Box<dyn Fn(&GameStateEnum<'g>) -> Box<dyn GameState<'g>>>,
         > = HashMap::new();
         game_state_fns.insert(
             GameStateEnum::Home(sdl2::pixels::Color::RGB(0, 0, 255)),
             Box::new(HomeState::new_state),
         );
-        game_state_fns.insert(GameStateEnum::Arena, Box::new(ArenaState::new_state));
+        game_state_fns.insert(
+            GameStateEnum::Arena((Vec::new(), Vec::new())),
+            Box::new(ArenaState::new_state),
+        );
         game_state_fns.insert(GameStateEnum::Select, Box::new(SelectState::new_state));
 
         GameStateHandler {
@@ -37,7 +40,7 @@ impl<'g> GameStateHandler<'g> {
         }
     }
 
-    pub fn new_state(&mut self, new_state: GameStateEnum) {
+    pub fn new_state(&mut self, new_state: GameStateEnum<'g>) {
         self.new_state = Some(new_state);
         // self.game_state_fn_string = Some(new_state.to_string());
     }
@@ -54,22 +57,22 @@ impl<'g> GameStateHandler<'g> {
     }
 }
 
-#[derive(Eq)]
-pub enum GameStateEnum {
+// #[derive(Eq)]
+pub enum GameStateEnum<'g> {
     Home(sdl2::pixels::Color),
     Select,
-    Arena,
+    Arena((Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>)),
 }
 
-// impl Eq for GameStateEnum {}
+impl<'g> Eq for GameStateEnum<'g> {}
 
-impl Hash for GameStateEnum {
+impl<'g> Hash for GameStateEnum<'g> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         std::mem::discriminant(self).hash(state);
     }
 }
 
-impl PartialEq for GameStateEnum {
+impl<'g> PartialEq for GameStateEnum<'g> {
     fn eq(&self, other: &Self) -> bool {
         std::mem::discriminant(self) == std::mem::discriminant(other)
     }
