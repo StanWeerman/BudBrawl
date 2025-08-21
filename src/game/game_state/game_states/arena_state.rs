@@ -90,7 +90,15 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             .map_err(|e| e.to_string())
             .unwrap();
 
-        let tex = Rc::new(gi.texture_creator.load_texture(&"assets/bud.png").unwrap());
+        let tex = Rc::new(gi.texture_creator.load_texture(&"assets/blud.png").unwrap());
+        let ground_tex = gi
+            .texture_creator
+            .load_texture(&"assets/ground.png")
+            .unwrap();
+
+        let ground = Ground::new(Vector2d::new(0.0, 0.0), ground_tex);
+        let _ground = Rc::new(RefCell::new(ground));
+        self.scene_manager.add(_ground);
 
         let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
 
