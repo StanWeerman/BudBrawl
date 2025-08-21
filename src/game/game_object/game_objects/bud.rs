@@ -52,7 +52,12 @@ impl<'g> Bud<'g> {
         }
     }
 
-    pub fn decide_move(&mut self, gi: &mut GameInfo<'g>, delta_time: f32) {
+    pub fn decide_move(
+        &mut self,
+        gi: &mut GameInfo<'g>,
+        collisions: &mut Collisions,
+        delta_time: f32,
+    ) {
         if self.bud_data.borrow().speed > 0 {
             let mut moving = Point::new(0, 0);
             if gi.input.is_pressed(Keycode::W) && !self.moved[0] {
@@ -87,10 +92,13 @@ impl<'g> Bud<'g> {
             } else if gi.input.is_released(Keycode::D) {
                 self.moved[3] = false;
             }
-            self.move_bud(moving, delta_time);
+            self.move_bud(moving, collisions, delta_time);
         }
     }
-    pub fn move_bud(&mut self, moving: Point, delta_time: f32) {
+    pub fn move_bud(&mut self, moving: Point, collisions: &mut Collisions, delta_time: f32) {
+        if collisions.check_tile(self.position + moving) {
+            return;
+        }
         if moving.x != 0 || moving.y != 0 {
             self.bud_data.borrow_mut().speed -= 1;
             self.position += moving;
@@ -182,7 +190,7 @@ impl<'g> GameObject<'g> for Bud<'g> {
         // level_info: &mut LevelInfo<'g>,
     ) -> bool {
         if self.active {
-            self.decide_move(gi, _delta_time);
+            self.decide_move(gi, collisions, _delta_time);
         }
         true
     }
@@ -295,6 +303,17 @@ impl<'g> InitialBudData<'g> {
             effects: [None, None, None],
             name,
         }
+    }
+}
+
+impl<'g> Colliding for Bud<'g> {
+    fn has_collided(&mut self, other: &dyn Colliding) {
+        todo!()
+    }
+
+    fn get_collider(&self) -> Point {
+        println!("WHY IS IT, {} {}", self.position.x, self.position.y);
+        self.position
     }
 }
 

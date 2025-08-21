@@ -17,7 +17,7 @@ use crate::vector2d::Vector2d;
 
 pub trait Colliding {
     fn has_collided(&mut self, other: &dyn Colliding);
-    fn get_collider(&self) -> Rc<RefCell<Vec<Point>>>;
+    fn get_collider(&self) -> Point;
     //fn get_velocity(&self) -> Vector2d;
     // fn get_move_vector(&self) -> Option<Rc<RefCell<Vector2d>>> {
     //     None
@@ -74,39 +74,23 @@ impl<'r> Collisions<'r> {
     fn contains(a: &Rc<RefCell<Vec<Point>>>, b: &Rc<RefCell<Vec<Point>>>) -> bool {
         true
     }
-    pub fn get_squares(&mut self, scale: i32) -> Vec<Point> {
-        let mut all = vec![];
+    pub fn check_tile(&mut self, this: Point) -> bool {
         for other in &self.colliders {
             match other.try_borrow_mut() {
                 Ok(mut val) => {
                     let other_col = val.get_collider();
-                    for p in other_col.borrow().iter() {
-                        all.push(p.clone())
+                    println!("{},{} .  {}, {}", other_col.x, other_col.y, this.x, this.y);
+                    if other_col.x == this.x && other_col.y == this.y {
+                        println!("HM");
+                        return true;
                     }
                 }
                 Err(_) => continue,
             }
         }
-        all
+        false
     }
-    pub fn check_collision(&mut self, this: &mut dyn Colliding) -> bool {
-        let mut ret = false;
-        let col = this.get_collider();
-        for other in &self.colliders {
-            match other.try_borrow_mut() {
-                Ok(mut val) => {
-                    let other_col = val.get_collider();
-                    if Collisions::contains(&col, &other_col) {
-                        val.has_collided(this);
-                        this.has_collided(&mut *val);
-                    }
-                    ret = true;
-                }
-                Err(_) => continue,
-            }
-        }
-        ret
-    }
+
     // pub fn check_raycast(
     //     &mut self,
     //     this: &dyn Colliding,

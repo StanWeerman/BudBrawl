@@ -20,7 +20,7 @@ impl Camera {
         Camera {
             position: Vector2d::default(),
             window_size: (0, 0),
-            scale: 2,
+            scale: 4,
             blocks: (100, 100),
         }
     }

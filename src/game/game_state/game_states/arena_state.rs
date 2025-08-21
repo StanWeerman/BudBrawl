@@ -113,8 +113,11 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             let mut bud = Bud::new(Point::new(0, i as i32), Rc::new(initial_bud_data.clone()));
             let _bud = Rc::new(RefCell::new(bud));
             let __bud = Rc::clone(&_bud);
+            let ___bud = Rc::clone(&__bud);
+
             self.turn_handler.add(__bud);
             self.scene_manager.add(_bud);
+            self.collisions.add(___bud);
         }
 
         // Team 1
@@ -122,8 +125,11 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             let mut bud = Bud::new(Point::new(10, i as i32), Rc::new(initial_bud_data.clone()));
             let _bud = Rc::new(RefCell::new(bud));
             let __bud = Rc::clone(&_bud);
+            let ___bud = Rc::clone(&__bud);
+
             self.turn_handler.add(__bud);
             self.scene_manager.add(_bud);
+            self.collisions.add(___bud);
         }
 
         self.msh.add_menu_states(Box::new([(
