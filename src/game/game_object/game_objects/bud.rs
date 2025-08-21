@@ -257,7 +257,7 @@ pub struct InitialBudData<'g> {
     pub index: u8,
     pub team: u8,
     rounds: u64,
-    // traits:
+    traits: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
 }
 
 impl<'g> InitialBudData<'g> {
@@ -269,6 +269,7 @@ impl<'g> InitialBudData<'g> {
             index,
             team,
             rounds: 0,
+            traits: [None, None, None],
         }
     }
 }
