@@ -35,6 +35,7 @@ pub struct Bud<'g> {
     pressed: bool,
     effects: Vec<Rc<RefCell<dyn Effect<'g> + 'g>>>,
     moved: [bool; 4],
+    tex_src: Rect,
     active: bool,
 }
 impl<'g> Bud<'g> {
@@ -47,8 +48,10 @@ impl<'g> Bud<'g> {
             effects: vec![],
             moved: [false, false, false, false],
             active: false,
+            tex_src: Rect::new(0, 0, 16, 21),
         }
     }
+
     pub fn decide_move(&mut self, gi: &mut GameInfo<'g>, delta_time: f32) {
         if self.bud_data.borrow().speed > 0 {
             let mut moving = Point::new(0, 0);
@@ -56,6 +59,7 @@ impl<'g> Bud<'g> {
                 self.moved[0] = true;
                 moving.x = 0;
                 moving.y = -1;
+                self.tex_src = Rect::new(0, 21, 16, 21);
             } else if gi.input.is_released(Keycode::W) {
                 self.moved[0] = false;
             }
@@ -63,6 +67,7 @@ impl<'g> Bud<'g> {
                 self.moved[1] = true;
                 moving.x = 0;
                 moving.y = 1;
+                self.tex_src = Rect::new(0, 0, 16, 21);
             } else if gi.input.is_released(Keycode::S) {
                 self.moved[1] = false;
             }
@@ -70,6 +75,7 @@ impl<'g> Bud<'g> {
                 self.moved[2] = true;
                 moving.x = -1;
                 moving.y = 0;
+                self.tex_src = Rect::new(16, 21, 16, 21);
             } else if gi.input.is_released(Keycode::A) {
                 self.moved[2] = false;
             }
@@ -77,6 +83,7 @@ impl<'g> Bud<'g> {
                 self.moved[3] = true;
                 moving.x = 1;
                 moving.y = 0;
+                self.tex_src = Rect::new(16, 0, 16, 21);
             } else if gi.input.is_released(Keycode::D) {
                 self.moved[3] = false;
             }
@@ -121,7 +128,7 @@ impl<'g> GameObject<'g> for Bud<'g> {
 
         canvas.copy_ex(
             &self.bud_data.borrow().initial.texture,
-            Rect::new(0, 0, 16, 21),
+            self.tex_src,
             some_rect,
             0.0,
             None,
