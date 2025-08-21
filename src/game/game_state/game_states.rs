@@ -1,4 +1,4 @@
-use std::{cmp, collections::HashMap, hash::Hash};
+use std::{cell::RefCell, cmp, collections::HashMap, hash::Hash, rc::Rc};
 
 use crate::game::{game_object::game_objects::bud::InitialBudData, game_state::GameState};
 
@@ -31,7 +31,10 @@ impl<'g> GameStateHandler<'g> {
             GameStateEnum::Arena((Vec::new(), Vec::new())),
             Box::new(ArenaState::new_state),
         );
-        game_state_fns.insert(GameStateEnum::Select, Box::new(SelectState::new_state));
+        game_state_fns.insert(
+            GameStateEnum::Select((Vec::new(), Vec::new())),
+            Box::new(SelectState::new_state),
+        );
 
         GameStateHandler {
             new_state: None,
@@ -60,7 +63,7 @@ impl<'g> GameStateHandler<'g> {
 // #[derive(Eq)]
 pub enum GameStateEnum<'g> {
     Home(sdl2::pixels::Color),
-    Select,
+    Select((Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>)),
     Arena((Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>)),
 }
 

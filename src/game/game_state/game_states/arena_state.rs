@@ -44,7 +44,7 @@ pub struct ArenaState<'g> {
 }
 
 impl<'g> ArenaState<'g> {
-    pub fn new(initial_buds_tuple: &(Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>)) -> Self {
+    pub fn new(initial_buds_tuple: (Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>)) -> Self {
         Self {
             scene_manager: SceneManager::new(),
             si: StateInfo::new(),
@@ -66,7 +66,9 @@ impl<'g> ArenaState<'g> {
     }
     pub fn new_state(state: &GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g> {
         match state {
-            GameStateEnum::Arena(initial_buds_tuple) => Box::new(Self::new(initial_buds_tuple)),
+            GameStateEnum::Arena(initial_buds_tuple) => {
+                Box::new(Self::new(initial_buds_tuple.clone()))
+            }
             _ => unreachable!(),
         }
     }
@@ -198,6 +200,11 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         self.si.add_objects(&mut self.scene_manager);
 
         canvas.string(0, 0, "Arena", sdl2::pixels::Color::RGB(0, 255, 0));
+
+        if gi.input.is_pressed(Keycode::R) {
+            gi.game_state_handler
+                .new_state(GameStateEnum::Select(self.initial_buds_tuple.clone()));
+        }
     }
 }
 
