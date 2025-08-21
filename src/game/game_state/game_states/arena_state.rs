@@ -40,10 +40,11 @@ pub struct ArenaState<'g> {
     turn_handler: TurnHandler<'g>,
     view: View,
     end_turn: bool,
+    initial_buds_tuple: (Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>),
 }
 
 impl<'g> ArenaState<'g> {
-    pub fn new() -> Self {
+    pub fn new(initial_buds_tuple: &(Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>)) -> Self {
         Self {
             scene_manager: SceneManager::new(),
             si: StateInfo::new(),
@@ -60,11 +61,12 @@ impl<'g> ArenaState<'g> {
             turn_handler: TurnHandler::new(),
             view: View::new(),
             end_turn: true,
+            initial_buds_tuple: initial_buds_tuple.clone(),
         }
     }
-    pub fn new_state(state: &GameStateEnum) -> Box<dyn GameState<'g> + 'g> {
+    pub fn new_state(state: &GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g> {
         match state {
-            GameStateEnum::Arena => Box::new(Self::new()),
+            GameStateEnum::Arena(initial_buds_tuple) => Box::new(Self::new(initial_buds_tuple)),
             _ => unreachable!(),
         }
     }

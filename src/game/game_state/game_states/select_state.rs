@@ -21,7 +21,8 @@ impl<'g> SelectState<'g> {
             Rect::new(100, 100, 100, 200),
             "Start",
             Box::new(|gi: &mut GameInfo| {
-                gi.game_state_handler.new_state(GameStateEnum::Arena);
+                gi.game_state_handler
+                    .new_state(GameStateEnum::Arena((Vec::new(), Vec::new())));
             }),
         ));
         // buttons.push(MenuButton::new(
@@ -33,7 +34,7 @@ impl<'g> SelectState<'g> {
         // ));
         Self { buttons }
     }
-    pub fn new_state(state: &GameStateEnum) -> Box<dyn GameState<'g> + 'g> {
+    pub fn new_state(state: &GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g> {
         match state {
             GameStateEnum::Select => Box::new(Self::new()),
             _ => unreachable!(),
