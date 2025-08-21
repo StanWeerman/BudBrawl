@@ -85,9 +85,9 @@ impl Camera {
         let center_x = rect.center().x();
         let center_y = rect.center().y();
         let mut x = center_x as f32 - self.position.x;
-        x /= self.scale as f32 / self.window_scale() / 10 as f32;
+        x /= self.scale as f32 / self.window_scale() / 16 as f32;
         let mut y = center_y as f32 - self.position.y;
-        y /= self.scale as f32 / self.window_scale() / 10 as f32;
+        y /= self.scale as f32 / self.window_scale() / 16 as f32;
 
         rect.w *= self.window_scale() as i32;
         rect.h *= self.window_scale() as i32;
@@ -97,7 +97,9 @@ impl Camera {
         // rect.x /= (self.scale as f32);
         // rect.y -= (self.position.y as i32);
         // rect.y /= (self.scale as f32);
-        rect.center_on(Point::new(x as i32, y as i32));
+        rect.x = x as i32;
+        rect.y = y as i32;
+        //rect.center_on(Point::new(x as i32, y as i32));
         // rect.x = x as i32;
         // rect.y = y as i32;
     }

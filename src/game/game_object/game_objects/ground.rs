@@ -49,7 +49,7 @@ impl<'g> GameObject<'g> for Ground<'g> {
         // let (position, size) = self.get_draw_values();
         for i in 0..100 {
             for j in 0..100 {
-                let mut some_rect = Rect::from_center(Point::new(i, j), 10, 10);
+                let mut some_rect = Rect::from_center(Point::new(i, j), 16, 16);
                 camera.rect_to_camera(&mut some_rect);
                 canvas.copy_ex(
                     &self.tex, None, some_rect, 0.0, None,
