@@ -1,6 +1,6 @@
 use std::{cell::RefCell, rc::Rc};
 
-use sdl2::{rect::Rect, render::Canvas, video::Window};
+use sdl2::{gfx::primitives::DrawRenderer, rect::Rect, render::Canvas, video::Window};
 
 use crate::game::{
     button::{Button, MenuButton},
@@ -23,49 +23,49 @@ impl<'g> BudState<'g> {
     pub fn new(gi: &mut GameInfo<'g>) -> Self {
         let mut buttons = Vec::new();
         let mut buttons_right = Vec::new();
-        buttons.push(MenuButton::new(
-            Rect::new(0, 50, 100, 100),
-            "Right",
-            Box::new(|bud_data: &mut Rc<RefCell<BudData<'g>>>| {
-                // bud_data.borrow_mut().turn(1.0);
-            }),
-        ));
-        buttons.push(MenuButton::new(
-            Rect::new(0, 150, 100, 100),
-            "Left",
-            Box::new(|bud_data| {
-                // bud_data.borrow_mut().turn(-1.0);
-            }),
-        ));
+        // buttons.push(MenuButton::new(
+        //     Rect::new(0, 50, 100, 100),
+        //     "Right",
+        //     Box::new(|bud_data: &mut Rc<RefCell<BudData<'g>>>| {
+        //         // bud_data.borrow_mut().turn(1.0);
+        //     }),
+        // ));
+        // buttons.push(MenuButton::new(
+        //     Rect::new(0, 150, 100, 100),
+        //     "Left",
+        //     Box::new(|bud_data| {
+        //         // bud_data.borrow_mut().turn(-1.0);
+        //     }),
+        // ));
 
-        buttons.push(MenuButton::new(
-            Rect::new(0, 250, 100, 100),
-            "Gas",
-            Box::new(|bud_data| {
-                // bud_data.borrow_mut().gas(1.0);
-            }),
-        ));
-        buttons.push(MenuButton::new(
-            Rect::new(0, 350, 100, 100),
-            "Brake",
-            Box::new(|bud_data| {
-                // bud_data.borrow_mut().gas(-1.0);
-            }),
-        ));
-        buttons.push(MenuButton::new(
-            Rect::new(0, 450, 100, 100),
-            "GO!",
-            Box::new(|bud_data| {
-                // bud_data.borrow_mut().go();
-            }),
-        ));
-        buttons_right.push(MenuButton::new(
-            Rect::new(450, 450, 100, 100),
-            "GO!",
-            Box::new(|bud_data| {
-                // bud_data.borrow_mut().go();
-            }),
-        ));
+        // buttons.push(MenuButton::new(
+        //     Rect::new(0, 250, 100, 100),
+        //     "Gas",
+        //     Box::new(|bud_data| {
+        //         // bud_data.borrow_mut().gas(1.0);
+        //     }),
+        // ));
+        // buttons.push(MenuButton::new(
+        //     Rect::new(0, 350, 100, 100),
+        //     "Brake",
+        //     Box::new(|bud_data| {
+        //         // bud_data.borrow_mut().gas(-1.0);
+        //     }),
+        // ));
+        // buttons.push(MenuButton::new(
+        //     Rect::new(0, 450, 100, 100),
+        //     "GO!",
+        //     Box::new(|bud_data| {
+        //         // bud_data.borrow_mut().go();
+        //     }),
+        // ));
+        // buttons_right.push(MenuButton::new(
+        //     Rect::new(450, 450, 100, 100),
+        //     "GO!",
+        //     Box::new(|bud_data| {
+        //         // bud_data.borrow_mut().go();
+        //     }),
+        // ));
         Self {
             buttons,
             bud_data_left: None,
@@ -123,6 +123,16 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 }
                 button.draw(canvas, &gi.camera);
             }
+            canvas.string(
+                800,
+                800,
+                &format!(
+                    "Team {} | Bud {}",
+                    bud_data.borrow().initial.team + 1,
+                    bud_data.borrow().initial.index + 1
+                ),
+                sdl2::pixels::Color::RGB(0, 0, 0),
+            );
         }
         if let Some(bud_data) = &mut self.bud_data_right {
             for button in self.buttons_right.iter_mut() {
@@ -134,6 +144,16 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 }
                 button.draw(canvas, &gi.camera);
             }
+            canvas.string(
+                800,
+                800,
+                &format!(
+                    "Team {} | Bud {}",
+                    bud_data.borrow().initial.team + 1,
+                    bud_data.borrow().initial.index + 1
+                ),
+                sdl2::pixels::Color::RGB(0, 0, 0),
+            );
         }
         hover
     }

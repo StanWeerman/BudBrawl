@@ -49,10 +49,11 @@ impl<'g> SelectState<'g> {
             _ => unreachable!(),
         }
     }
-    fn setup_buds(initial_buds: &mut Vec<InitialBudData<'g>>, tex: Rc<Texture<'g>>) {
+    fn setup_buds(initial_buds: &mut Vec<InitialBudData<'g>>, team: u8, tex: Rc<Texture<'g>>) {
         while initial_buds.len() < 5 {
             initial_buds.push(InitialBudData::default(
                 Rc::clone(&tex),
+                team,
                 initial_buds.len() as u8,
             ));
         }
@@ -72,8 +73,8 @@ impl<'g> GameState<'g> for SelectState<'g> {
                 .load_texture(&"assets/bud_2.png")
                 .unwrap(),
         );
-        Self::setup_buds(&mut self.initial_buds_tuple.0, Rc::clone(&tex));
-        Self::setup_buds(&mut self.initial_buds_tuple.1, Rc::clone(&tex));
+        Self::setup_buds(&mut self.initial_buds_tuple.0, 0, Rc::clone(&tex));
+        Self::setup_buds(&mut self.initial_buds_tuple.1, 1, Rc::clone(&tex));
         // while self.initial_buds_tuple.0.len() < 5 {
         //     self.initial_buds_tuple.0.push(InitialBudData::default(
         //         Rc::clone(&tex),

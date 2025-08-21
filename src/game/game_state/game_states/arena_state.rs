@@ -106,6 +106,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
 
         // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
 
+        // Team 0
         for (i, initial_bud_data) in self.initial_buds_tuple.0.iter().enumerate() {
             let mut bud = Bud::new(Point::new(0, i as i32), Rc::new(initial_bud_data.clone()));
             let _bud = Rc::new(RefCell::new(bud));
@@ -114,6 +115,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             self.scene_manager.add(_bud);
         }
 
+        // Team 1
         for (i, initial_bud_data) in self.initial_buds_tuple.1.iter().enumerate() {
             let mut bud = Bud::new(Point::new(10, i as i32), Rc::new(initial_bud_data.clone()));
             let _bud = Rc::new(RefCell::new(bud));
@@ -174,8 +176,13 @@ impl<'g> GameState<'g> for ArenaState<'g> {
     fn run(&mut self, gi: &mut GameInfo<'g>, delta_time: f32, canvas: &mut Canvas<Window>) {
         //Handling the ending of a turn!
         if self.end_turn && gi.input.is_pressed(Keycode::Return) {
-            self.turn_handler
-                .next_turn(delta_time, &mut self.collisions, gi, &mut self.si);
+            self.turn_handler.next_turn(
+                delta_time,
+                &mut self.collisions,
+                gi,
+                &mut self.si,
+                &mut self.msh,
+            );
             println!("?");
             self.end_turn = false;
         } else if gi.input.is_released(Keycode::Return) {

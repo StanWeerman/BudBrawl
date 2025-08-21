@@ -140,10 +140,13 @@ impl<'g> GameObject<'g> for Bud<'g> {
         collisions: &mut Collisions,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
+        msh: &mut MenuStateHandler<'g>,
     ) -> bool {
         self.active = true;
         println!("Start Turn!");
-
+        msh.load_menu(MenuStateEnum::Bud(BudEnum::LeftBud(Some(Rc::clone(
+            &self.bud_data,
+        )))));
         self.apply_effects();
         true
     }
@@ -197,10 +200,10 @@ impl<'g> Button<'g> for Bud<'g> {
     }
 
     fn action(&mut self, input: &mut Self::Input) {
-        input.load_menu(MenuStateEnum::Bud(BudEnum::LeftBud(Some(Rc::clone(
-            &self.bud_data,
-        )))));
-        println!("Pressed");
+        // input.load_menu(MenuStateEnum::Bud(BudEnum::LeftBud(Some(Rc::clone(
+        //     &self.bud_data,
+        // )))));
+        // println!("Pressed");
     }
 
     fn in_bounds(&self, mouse_x: i32, mouse_y: i32, camera: Option<&Camera>) -> bool {
@@ -219,7 +222,7 @@ impl<'g> Button<'g> for Bud<'g> {
 }
 
 pub struct BudData<'g> {
-    initial: Rc<InitialBudData<'g>>,
+    pub initial: Rc<InitialBudData<'g>>,
     selected: bool,
     health: u16,
     speed: u16,
@@ -251,18 +254,20 @@ pub struct InitialBudData<'g> {
     texture: Rc<Texture<'g>>,
     max_health: u16,
     max_speed: u16,
-    index: u8,
+    pub index: u8,
+    pub team: u8,
     rounds: u64,
     // traits:
 }
 
 impl<'g> InitialBudData<'g> {
-    pub fn default(texture: Rc<Texture<'g>>, index: u8) -> InitialBudData {
+    pub fn default(texture: Rc<Texture<'g>>, team: u8, index: u8) -> InitialBudData {
         InitialBudData {
             texture,
             max_health: 10,
             max_speed: 3,
             index,
+            team,
             rounds: 0,
         }
     }

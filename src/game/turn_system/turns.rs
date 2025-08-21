@@ -4,6 +4,7 @@ use std::{cell::RefCell, rc::Rc};
 use crate::game::collision_system::collisions::Collisions;
 use crate::game::game_info::GameInfo;
 use crate::game::game_state::StateInfo;
+use crate::game::menu::menu_state::menu_states::MenuStateHandler;
 use crate::game::scene_manager::Object;
 
 pub struct TurnHandler<'g> {
@@ -24,6 +25,7 @@ impl<'g> TurnHandler<'g> {
         collisions: &mut Collisions,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
+        msh: &mut MenuStateHandler<'g>,
     ) {
         let ending = self.current.clone();
         match ending {
@@ -34,7 +36,9 @@ impl<'g> TurnHandler<'g> {
             None => {}
         }
         let starting = self.object_list.pop_front().unwrap();
-        starting.borrow_mut().start(_delta_time, collisions, gi, si);
+        starting
+            .borrow_mut()
+            .start(_delta_time, collisions, gi, si, msh);
         self.current = Option::Some(starting);
     }
     pub fn add(&mut self, obj: Rc<RefCell<Object<'g>>>) {
