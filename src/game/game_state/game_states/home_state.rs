@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use sdl2::{
     gfx::primitives::DrawRenderer, keyboard::Keycode, rect::Rect, render::Canvas, video::Window,
     EventPump,
@@ -22,7 +24,8 @@ impl<'g> HomeState<'g> {
             Rect::new(100, 100, 100, 200),
             "Start",
             Box::new(|gi: &mut GameInfo| {
-                gi.game_state_handler.new_state(GameStateEnum::Select);
+                gi.game_state_handler
+                    .new_state(GameStateEnum::Select((Vec::new(), Vec::new())));
             }),
         ));
         // buttons.push(MenuButton::new(
