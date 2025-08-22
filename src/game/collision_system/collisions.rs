@@ -18,7 +18,11 @@ use crate::vector2d::Vector2d;
 
 pub trait Colliding<'g> {
     fn get_collider(&self) -> Point;
-    fn on_effected(&mut self, effect: Box<dyn Effect<'g> + 'g>);
+    fn on_effected(
+        &mut self,
+        effect: Box<dyn Effect<'g> + 'g>,
+        others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>,
+    );
     //fn get_velocity(&self) -> Vector2d;
     // fn get_move_vector(&self) -> Option<Rc<RefCell<Vector2d>>> {
     //     None
@@ -52,7 +56,7 @@ impl Not for Side {
 }
 
 pub struct Collisions<'r> {
-    colliders: Vec<Rc<RefCell<dyn Colliding<'r> + 'r>>>,
+    pub colliders: Vec<Rc<RefCell<dyn Colliding<'r> + 'r>>>,
 }
 
 impl<'r> Collisions<'r> {
@@ -111,7 +115,7 @@ impl<'r> Collisions<'r> {
                 Ok(mut val) => {
                     let other_col = val.get_collider();
                     if other_col.x == this.x && other_col.y == this.y {
-                        val.on_effected(effect);
+                        val.on_effected(effect, self.colliders.clone());
                         return true;
                     }
                 }

@@ -76,12 +76,12 @@ pub trait Button<'b> {
     }
     fn in_bounds(&self, mouse_x: i32, mouse_y: i32, camera: Option<&Camera>) -> bool {
         let (mut rect, text) = self.get_draw_values();
-        println!("Initial: {:?}", rect);
+        // println!("Initial: {:?}", rect);
 
         if let Some(camera) = camera {
             camera.ui_rect_to_camera(&mut rect);
         }
-        println!("Final: {:?}", rect);
+        //println!("Final: {:?}", rect);
         (mouse_x >= rect.left() && mouse_x <= rect.right())
             && (mouse_y >= rect.top() && mouse_y <= rect.bottom())
     }
