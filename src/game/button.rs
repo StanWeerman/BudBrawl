@@ -79,11 +79,6 @@ pub trait Button<'b> {
         if let Some(camera) = camera {
             camera.ui_rect_to_camera(&mut rect);
         }
-        // println!("Initial: {:?}", rect);
-
-        if let Some(camera) = camera {
-            camera.ui_rect_to_camera(&mut rect);
-        }
         //println!("Final: {:?}", rect);
         (mouse_x >= rect.left() && mouse_x <= rect.right())
             && (mouse_y >= rect.top() && mouse_y <= rect.bottom())
