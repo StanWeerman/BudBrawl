@@ -30,7 +30,7 @@ impl<'g> TurnHandler<'g> {
         let ending = self.current.clone();
         match ending {
             Some(val) => {
-                val.borrow_mut().end();
+                val.borrow_mut().end(_delta_time, collisions, gi, si, msh);
                 self.add(val);
             }
             None => {}

@@ -15,7 +15,32 @@ impl<'g> Effect<'g> for SelfEffect {
         todo!()
     }
 
-    fn apply(&self, bud: Rc<RefCell<BudData<'g>>>) {
+    fn apply(&mut self, bud: Rc<RefCell<BudData<'g>>>) {
         todo!()
+    }
+}
+
+pub struct DamageEffect {
+    applications: i32,
+    damage: u16,
+}
+impl DamageEffect {
+    pub fn new(damage: u16) -> Self {
+        Self {
+            applications: 1,
+            damage,
+        }
+    }
+}
+
+impl<'g> Effect<'g> for DamageEffect {
+    fn is_active(&self) -> bool {
+        println!("hello world, {}", self.applications);
+        self.applications > 0
+    }
+
+    fn apply(&mut self, bud: Rc<RefCell<BudData<'g>>>) {
+        self.applications -= 1;
+        bud.borrow_mut().remove_health(self.damage);
     }
 }
