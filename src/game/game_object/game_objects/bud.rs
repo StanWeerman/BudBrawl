@@ -279,7 +279,7 @@ pub struct InitialBudData<'g> {
     max_speed: u16,
     pub index: u8,
     pub team: u8,
-    rounds: u64,
+    pub rounds: u64,
     effects: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
     pub name: String,
 }
