@@ -328,6 +328,16 @@ impl<'g> InitialBudData<'g> {
             name,
         }
     }
+    pub fn add_effect(&mut self, new_effect: Rc<RefCell<dyn Effect<'g> + 'g>>) {
+        for effect in self.effects.iter_mut() {
+            if effect.is_none() {
+                *effect = Some(Rc::clone(&new_effect));
+            }
+        }
+    }
+    pub fn clear_effects(&mut self) {
+        self.effects = [None, None, None];
+    }
 }
 
 impl<'g> Colliding<'g> for Bud<'g> {

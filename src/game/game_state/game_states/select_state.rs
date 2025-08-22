@@ -36,8 +36,24 @@ pub struct SelectState<'g> {
 pub struct SelectInfo<'g> {
     pub initial_buds_tuple: (Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>),
     pub current_bud: Option<usize>,
+    pub trait_description: String,
     pub team: u8,
     pub done: bool,
+}
+
+impl<'g> SelectInfo<'g> {
+    pub fn get_current_initial_bud_data(&mut self) -> Option<&mut InitialBudData<'g>> {
+        if let Some(current_bud) = self.current_bud {
+            let initial_buds_tuple = if self.team == 0 {
+                &mut self.initial_buds_tuple.0
+            } else {
+                &mut self.initial_buds_tuple.1
+            };
+            return Some(&mut initial_buds_tuple[current_bud]);
+        } else {
+            None
+        }
+    }
 }
 
 impl<'g> SelectState<'g> {
@@ -60,6 +76,7 @@ impl<'g> SelectState<'g> {
             select_info: Rc::new(RefCell::new(SelectInfo {
                 team: 0,
                 current_bud: None,
+                trait_description: String::new(),
                 initial_buds_tuple: initial_buds_tuple.clone(),
                 done: false,
             })),

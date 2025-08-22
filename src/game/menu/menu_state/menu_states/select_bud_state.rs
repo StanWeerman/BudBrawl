@@ -3,7 +3,8 @@ use std::{cell::RefCell, rc::Rc};
 use sdl2::{gfx::primitives::DrawRenderer, rect::Rect, render::Canvas, video::Window};
 
 use crate::game::{
-    button::{Button, MenuButton},
+    button::{Button, HoverMenuButton, MenuButton},
+    effect_system::effects::self_effect::SelfEffect,
     game_info::GameInfo,
     game_object::game_objects::bud::{Bud, BudData, InitialBudData},
     game_state::game_states::select_state::SelectInfo,
@@ -17,8 +18,7 @@ pub struct SelectBudState<'g> {
     select_info: Option<Rc<RefCell<SelectInfo<'g>>>>,
     full_buttons: Vec<MenuButton<SelectInfo<'g>>>,
     edit_buttons: Vec<MenuButton<SelectInfo<'g>>>,
-    team_1_buttons: Vec<MenuButton<InitialBudData<'g>>>,
-    team_2_buttons: Vec<MenuButton<SelectInfo<'g>>>,
+    trait_buttons: Vec<HoverMenuButton<SelectInfo<'g>>>,
 }
 
 impl<'g> SelectBudState<'g> {
@@ -74,10 +74,34 @@ impl<'g> SelectBudState<'g> {
         let mut edit_buttons = Vec::new();
 
         edit_buttons.push(MenuButton::new(
-            Rect::new(0, 850, 100, 100),
+            Rect::new(0, 850, 50, 50),
             "Back",
             Box::new(|select_info: &mut SelectInfo<'g>| {
                 select_info.current_bud = None;
+            }),
+        ));
+        edit_buttons.push(MenuButton::new(
+            Rect::new(50, 850, 50, 50),
+            "Reset",
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
+                    current_initial_bud_data.clear_effects();
+                }
+            }),
+        ));
+
+        let mut trait_buttons = Vec::new();
+
+        trait_buttons.push(HoverMenuButton::new(
+            Rect::new(200, 200, 100, 100),
+            "Fighter",
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
+                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
+                }
+            }),
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                select_info.trait_description = String::from("Increase buds damage by +1.");
             }),
         ));
 
@@ -85,8 +109,7 @@ impl<'g> SelectBudState<'g> {
             select_info: None,
             full_buttons,
             edit_buttons,
-            team_1_buttons: Vec::new(),
-            team_2_buttons: Vec::new(),
+            trait_buttons,
         }
     }
     fn draw_initial_bud_data(
@@ -122,16 +145,6 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
     ) {
         match menu_state_enum {
             MenuStateEnum::InitialBudDatas(select_info) => {
-                // for (i, initial_bud_data) in &select_info.borrow().initial_buds_tuple.0.enumerate()
-                // {
-                //     // if initial_bud_data.rounds == 0 {
-                //     //     self.team_1_buttons.push(MenuButton::new(
-                //     //         Rect::new(0, 50, 100, 100),
-                //     //         "Switch Team",
-                //     //         Box::new(|bud_data: &mut InitialBudData<'g>| {}),
-                //     //     ));
-                //     // }
-                // }
                 self.select_info = Some(Rc::clone(select_info));
             }
             _ => unreachable!(),
@@ -153,14 +166,25 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
 
                     button.draw(canvas, &gi.camera);
                 }
+                for button in self.trait_buttons.iter_mut() {
+                    button
+                        .press(&gi.input.mouse_state, &mut select_info, Some(&gi.camera))
+                        .0;
+
+                    button.draw(canvas, &gi.camera);
+                }
                 let initial_buds_tuple = if select_info.team == 0 {
                     &mut select_info.initial_buds_tuple.0
                 } else {
                     &mut select_info.initial_buds_tuple.1
                 };
                 Self::draw_initial_bud_data(&initial_buds_tuple[current_bud], 0, canvas);
-
-                println!("{:?}", select_info.current_bud);
+                canvas.string(
+                    800,
+                    200,
+                    &select_info.trait_description,
+                    sdl2::pixels::Color::RGB(0, 0, 0),
+                );
             } else {
                 // Viewing All Buds
                 for button in self.full_buttons.iter_mut() {
