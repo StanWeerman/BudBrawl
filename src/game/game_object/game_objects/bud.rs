@@ -116,10 +116,9 @@ impl<'g> Bud<'g> {
     }
     pub fn apply_effects(&mut self) {
         for i in 0..3 {
-            let new_effect = self.bud_data.borrow_mut().initial.effects[i]
-                .clone()
-                .unwrap();
-            new_effect.borrow_mut().apply(Rc::clone(&self.bud_data));
+            if let Some(new_effect) = self.bud_data.borrow_mut().initial.effects[i].clone() {
+                new_effect.borrow_mut().apply(Rc::clone(&self.bud_data));
+            }
         }
 
         self.effects
@@ -331,11 +330,7 @@ impl<'g> InitialBudData<'g> {
             index,
             team,
             rounds: 0,
-            effects: [
-                Some(Rc::new(RefCell::new(DamageEffect::new(1)))),
-                Some(Rc::new(RefCell::new(DamageEffect::new(1)))),
-                Some(Rc::new(RefCell::new(DamageEffect::new(1)))),
-            ],
+            effects: [None, None, None],
             name,
         }
     }
