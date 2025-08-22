@@ -356,10 +356,8 @@ impl<'g> InitialBudData<'g> {
             index,
             team,
             rounds: 0,
-<<<<<<< HEAD
-            effects: [None, None, None],
+
             effect_textures: [None, None, None],
-=======
             effects: [
                 Some(Rc::new(RefCell::new(AuraEffect::new(Box::new(
                     DamageEffect::new(10),
@@ -367,7 +365,6 @@ impl<'g> InitialBudData<'g> {
                 None,
                 None,
             ],
->>>>>>> refs/remotes/origin/main
             name,
         }
     }
