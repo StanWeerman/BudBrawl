@@ -72,6 +72,21 @@ impl<'r> Collisions<'r> {
             self.colliders.remove(*index - i);
         }
     }
+    pub fn remove(&mut self, this: Point) {
+        println!("{}", self.colliders.len());
+        let index = self.colliders.iter().position(|col| {
+            if let Err(_) = col.try_borrow() {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        if let Some(val) = index {
+            self.colliders.remove(val);
+        }
+
+        println!("{}", self.colliders.len());
+    }
     fn contains(a: &Rc<RefCell<Vec<Point>>>, b: &Rc<RefCell<Vec<Point>>>) -> bool {
         true
     }

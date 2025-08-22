@@ -38,6 +38,7 @@ pub struct Bud<'g> {
     moved: [bool; 4],
     direction: Direction,
     active: bool,
+    dead: bool,
 }
 impl<'g> Bud<'g> {
     pub fn new(position: Point, initial_blud_data: InitialBudData<'g>) -> Self {
@@ -50,6 +51,7 @@ impl<'g> Bud<'g> {
             moved: [false, false, false, false],
             active: false,
             direction: Direction::Down,
+            dead: false,
         }
     }
 
@@ -96,6 +98,9 @@ impl<'g> Bud<'g> {
             self.move_bud(moving, collisions, delta_time);
         }
     }
+    fn died(&mut self) {
+        self.dead = true;
+    }
     fn attack(&mut self, collisions: &mut Collisions) {
         let attack_tile = self.position + self.direction.get_point();
         if (collisions.impact_tile(attack_tile, Box::new(DamageEffect::new(10)))) {}
@@ -120,7 +125,6 @@ impl<'g> Bud<'g> {
                 new_effect.borrow_mut().apply(Rc::clone(&self.bud_data));
             }
         }
-
         self.effects
             .iter_mut()
             .filter(|eff| eff.is_active())
@@ -178,6 +182,13 @@ impl<'g> GameObject<'g> for Bud<'g> {
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
     ) -> bool {
+        if !self.dead && self.bud_data.borrow().health == 0 {
+            self.dead = true;
+            collisions.remove(self.position);
+        }
+        if self.dead {
+            return false;
+        }
         self.active = true;
         self.apply_effects();
 
@@ -200,6 +211,13 @@ impl<'g> GameObject<'g> for Bud<'g> {
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
     ) -> bool {
+        if !self.dead && self.bud_data.borrow().health == 0 {
+            self.dead = true;
+            collisions.remove(self.position);
+        }
+        if self.dead {
+            return false;
+        }
         self.active = false;
         self.attack(collisions);
         println!("End Turn!");
