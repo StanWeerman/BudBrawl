@@ -70,7 +70,7 @@ impl<'t> Game<'t> {
             self.gi
                 .input
                 .get_input(&mut self.event_pump, &mut self.gi.running);
-
+            self.gi.camera.set_window(&mut self.canvas);
             let time_after = unsafe { SDL_GetPerformanceCounter() };
             let delta_time: f32 = (time_after - time_before) as f32 * 1000.0
                 / unsafe { SDL_GetPerformanceFrequency() as f32 };

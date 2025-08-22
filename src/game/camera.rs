@@ -8,6 +8,7 @@ use sdl2::{
 
 use crate::vector2d::Vector2d;
 
+#[derive(Clone)]
 pub struct Camera {
     pub position: Vector2d,
     pub window_size: (u32, u32),
@@ -102,6 +103,24 @@ impl Camera {
         //rect.center_on(Point::new(x as i32, y as i32));
         // rect.x = x as i32;
         // rect.y = y as i32;
+    }
+    pub fn ui_rect_to_camera(&self, rect: &mut Rect) {
+        // self.ui_rect_to_camera_scaled(rect);
+        rect.x = (rect.x as f32 * self.window_size.0 as f32 / 100.0) as i32;
+        rect.w = (rect.w as f32 * self.window_size.0 as f32 / 100.0) as i32;
+        rect.y = (rect.y as f32 * self.window_size.1 as f32 / 100.0) as i32;
+        rect.h = (rect.h as f32 * self.window_size.1 as f32 / 100.0) as i32;
+    }
+    pub fn ui_rect_to_camera_scaled(&self, rect: &mut Rect) {
+        let scale = min(self.window_size.0, self.window_size.1);
+        rect.x = (rect.x as f32 * self.window_size.0 as f32 / 100.0) as i32;
+        rect.w = (rect.w as f32 * scale as f32 / 100.0) as i32;
+        rect.y = (rect.y as f32 * self.window_size.1 as f32 / 100.0) as i32;
+        rect.h = (rect.h as f32 * scale as f32 / 100.0) as i32;
+    }
+    pub fn ui_point_to_camera(&self, point: &mut Point) {
+        point.x = (point.x as f32 * self.window_size.0 as f32 / 100.0) as i32;
+        point.y = (point.y as f32 * self.window_size.1 as f32 / 100.0) as i32;
     }
     pub fn rect_scaled_to_camera(&self, rect: &mut Rect) {
         rect.x *= self.window_size.0 as i32 / 3 / 3;

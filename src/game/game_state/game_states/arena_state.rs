@@ -154,7 +154,6 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         }
         let mouse_state = gi.input.mouse_state.clone();
         self.view.move_view(delta_time, gi);
-        gi.camera.set_window(canvas);
         self.button.press(&mouse_state, gi, None);
         self.button.draw(canvas, &gi.camera);
 
