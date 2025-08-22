@@ -44,7 +44,7 @@ impl<'g> SceneManager<'g> {
     pub fn update(
         &mut self,
         delta_time: f32,
-        collisions: &mut Collisions,
+        collisions: &mut Collisions<'g>,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
     ) {

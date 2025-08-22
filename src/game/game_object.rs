@@ -88,7 +88,7 @@ pub trait GameObject<'g> {
     fn start(
         &mut self,
         _delta_time: f32,
-        collisions: &mut Collisions,
+        collisions: &mut Collisions<'g>,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
@@ -98,7 +98,7 @@ pub trait GameObject<'g> {
     fn end(
         &mut self,
         _delta_time: f32,
-        collisions: &mut Collisions,
+        collisions: &mut Collisions<'g>,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
@@ -108,7 +108,7 @@ pub trait GameObject<'g> {
     fn update(
         &mut self,
         _delta_time: f32,
-        collisions: &mut Collisions,
+        collisions: &mut Collisions<'g>,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
     ) -> bool {

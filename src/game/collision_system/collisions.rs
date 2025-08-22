@@ -18,7 +18,11 @@ use crate::vector2d::Vector2d;
 
 pub trait Colliding<'g> {
     fn get_collider(&self) -> Point;
-    fn on_effected(&mut self, effect: Box<dyn Effect<'g> + 'g>);
+    fn on_effected(
+        &mut self,
+        effect: Box<dyn Effect<'g> + 'g>,
+        others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>,
+    );
     //fn get_velocity(&self) -> Vector2d;
     // fn get_move_vector(&self) -> Option<Rc<RefCell<Vector2d>>> {
     //     None
@@ -52,7 +56,7 @@ impl Not for Side {
 }
 
 pub struct Collisions<'r> {
-    colliders: Vec<Rc<RefCell<dyn Colliding<'r> + 'r>>>,
+    pub colliders: Vec<Rc<RefCell<dyn Colliding<'r> + 'r>>>,
 }
 
 impl<'r> Collisions<'r> {
@@ -71,6 +75,21 @@ impl<'r> Collisions<'r> {
         for (i, index) in indexes.iter().enumerate() {
             self.colliders.remove(*index - i);
         }
+    }
+    pub fn remove(&mut self, this: Point) {
+        println!("{}", self.colliders.len());
+        let index = self.colliders.iter().position(|col| {
+            if let Err(_) = col.try_borrow() {
+                return true;
+            } else {
+                return false;
+            }
+        });
+        if let Some(val) = index {
+            self.colliders.remove(val);
+        }
+
+        println!("{}", self.colliders.len());
     }
     fn contains(a: &Rc<RefCell<Vec<Point>>>, b: &Rc<RefCell<Vec<Point>>>) -> bool {
         true
@@ -96,7 +115,7 @@ impl<'r> Collisions<'r> {
                 Ok(mut val) => {
                     let other_col = val.get_collider();
                     if other_col.x == this.x && other_col.y == this.y {
-                        val.on_effected(effect);
+                        val.on_effected(effect, self.colliders.clone());
                         return true;
                     }
                 }

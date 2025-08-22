@@ -19,7 +19,7 @@ use crate::{
         button::Button,
         camera::Camera,
         collision_system::collisions::{Colliding, Collisions, Side},
-        effect_system::effects::{self_effect::DamageEffect, Effect},
+        effect_system::effects::{aura_effect::AuraEffect, self_effect::DamageEffect, Effect},
         game_info::GameInfo,
         game_object::{game_objects::GameObjectEnum, GameObject, SuperGameObject},
         game_state::{game_states::select_state::NameGenerator, StateInfo},
@@ -38,6 +38,7 @@ pub struct Bud<'g> {
     moved: [bool; 4],
     direction: Direction,
     active: bool,
+    dead: bool,
 }
 impl<'g> Bud<'g> {
     pub fn new(position: Point, initial_blud_data: InitialBudData<'g>) -> Self {
@@ -50,6 +51,7 @@ impl<'g> Bud<'g> {
             moved: [false, false, false, false],
             active: false,
             direction: Direction::Down,
+            dead: false,
         }
     }
 
@@ -96,6 +98,9 @@ impl<'g> Bud<'g> {
             self.move_bud(moving, collisions, delta_time);
         }
     }
+    fn died(&mut self) {
+        self.dead = true;
+    }
     fn attack(&mut self, collisions: &mut Collisions) {
         let attack_tile = self.position + self.direction.get_point();
         if (collisions.impact_tile(attack_tile, Box::new(DamageEffect::new(10)))) {}
@@ -110,21 +115,27 @@ impl<'g> Bud<'g> {
             self.position += moving;
         }
     }
-    pub fn add_effect(&mut self, mut eff: Box<dyn Effect<'g> + 'g>) {
-        eff.apply(Rc::clone(&self.bud_data));
+    pub fn add_effect(
+        &mut self,
+        mut eff: Box<dyn Effect<'g> + 'g>,
+        others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>,
+    ) {
+        println!("EFFECTED");
+        eff.apply(Rc::clone(&self.bud_data), others);
         self.effects.push(eff);
     }
-    pub fn apply_effects(&mut self) {
+    pub fn apply_effects(&mut self, others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>) {
         for i in 0..3 {
             if let Some(new_effect) = self.bud_data.borrow_mut().initial.effects[i].clone() {
-                new_effect.borrow_mut().apply(Rc::clone(&self.bud_data));
+                new_effect
+                    .borrow_mut()
+                    .apply(Rc::clone(&self.bud_data), others.clone());
             }
         }
-
         self.effects
             .iter_mut()
             .filter(|eff| eff.is_active())
-            .for_each(|eff| eff.apply(Rc::clone(&self.bud_data)));
+            .for_each(|eff| eff.apply(Rc::clone(&self.bud_data), others.clone()));
     }
 }
 
@@ -173,13 +184,20 @@ impl<'g> GameObject<'g> for Bud<'g> {
     fn start(
         &mut self,
         _delta_time: f32,
-        collisions: &mut Collisions,
+        collisions: &mut Collisions<'g>,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
     ) -> bool {
+        if !self.dead && self.bud_data.borrow().health == 0 {
+            self.dead = true;
+            collisions.remove(self.position);
+        }
+        if self.dead {
+            return false;
+        }
         self.active = true;
-        self.apply_effects();
+        self.apply_effects(collisions.colliders.clone());
 
         println!(
             "Start Turn! This is bud {}, with {} health.",
@@ -200,6 +218,13 @@ impl<'g> GameObject<'g> for Bud<'g> {
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
     ) -> bool {
+        if !self.dead && self.bud_data.borrow().health == 0 {
+            self.dead = true;
+            collisions.remove(self.position);
+        }
+        if self.dead {
+            return false;
+        }
         self.active = false;
         self.attack(collisions);
         println!("End Turn!");
@@ -331,8 +356,18 @@ impl<'g> InitialBudData<'g> {
             index,
             team,
             rounds: 0,
+<<<<<<< HEAD
             effects: [None, None, None],
             effect_textures: [None, None, None],
+=======
+            effects: [
+                Some(Rc::new(RefCell::new(AuraEffect::new(Box::new(
+                    DamageEffect::new(10),
+                ))))),
+                None,
+                None,
+            ],
+>>>>>>> refs/remotes/origin/main
             name,
         }
     }
@@ -420,8 +455,12 @@ impl<'g> InitialBudData<'g> {
 }
 
 impl<'g> Colliding<'g> for Bud<'g> {
-    fn on_effected(&mut self, effect: Box<dyn Effect<'g> + 'g>) {
-        self.add_effect(effect);
+    fn on_effected(
+        &mut self,
+        effect: Box<dyn Effect<'g> + 'g>,
+        others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>,
+    ) {
+        self.add_effect(effect, others);
     }
 
     fn get_collider(&self) -> Point {

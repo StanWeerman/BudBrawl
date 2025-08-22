@@ -1,7 +1,11 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::game::{effect_system::effects::Effect, game_object::game_objects::bud::BudData};
+use crate::game::{
+    collision_system::collisions::Colliding, effect_system::effects::Effect,
+    game_object::game_objects::bud::BudData,
+};
 
+#[derive(Clone)]
 pub struct SelfEffect {}
 
 impl SelfEffect {
@@ -15,11 +19,16 @@ impl<'g> Effect<'g> for SelfEffect {
         todo!()
     }
 
-    fn apply(&mut self, bud: Rc<RefCell<BudData<'g>>>) {
+    fn apply(
+        &mut self,
+        bud: Rc<RefCell<BudData<'g>>>,
+        others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>,
+    ) {
         todo!()
     }
 }
 
+#[derive(Clone)]
 pub struct DamageEffect {
     applications: i32,
     damage: u16,
@@ -38,7 +47,11 @@ impl<'g> Effect<'g> for DamageEffect {
         self.applications > 0
     }
 
-    fn apply(&mut self, bud: Rc<RefCell<BudData<'g>>>) {
+    fn apply(
+        &mut self,
+        bud: Rc<RefCell<BudData<'g>>>,
+        others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>,
+    ) {
         self.applications -= 1;
         bud.borrow_mut().remove_health(self.damage);
     }

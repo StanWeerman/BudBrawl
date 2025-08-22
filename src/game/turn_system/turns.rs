@@ -22,7 +22,7 @@ impl<'g> TurnHandler<'g> {
     pub fn next_turn(
         &mut self,
         _delta_time: f32,
-        collisions: &mut Collisions,
+        collisions: &mut Collisions<'g>,
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
@@ -30,15 +30,24 @@ impl<'g> TurnHandler<'g> {
         let ending = self.current.clone();
         match ending {
             Some(val) => {
-                val.borrow_mut().end(_delta_time, collisions, gi, si, msh);
-                self.add(val);
+                let did_turn = val.borrow_mut().end(_delta_time, collisions, gi, si, msh);
+                if did_turn {
+                    self.add(val);
+                } else {
+                }
             }
             None => {}
         }
-        let starting = self.object_list.pop_front().unwrap();
-        starting
+        let mut starting = self.object_list.pop_front().unwrap();
+        let mut can_start = starting
             .borrow_mut()
             .start(_delta_time, collisions, gi, si, msh);
+        while !can_start {
+            starting = self.object_list.pop_front().unwrap();
+            can_start = starting
+                .borrow_mut()
+                .start(_delta_time, collisions, gi, si, msh);
+        }
         self.current = Option::Some(starting);
     }
     pub fn add(&mut self, obj: Rc<RefCell<Object<'g>>>) {
