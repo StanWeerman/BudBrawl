@@ -7,6 +7,7 @@ use sdl2::{
 
 use crate::game::{
     button::{Button, MenuButton},
+    camera,
     game_info::GameInfo,
     game_state::{game_states::GameStateEnum, GameState},
 };
@@ -21,7 +22,7 @@ impl<'g> HomeState<'g> {
         // println!("Making Home");
         let mut buttons = Vec::new();
         buttons.push(MenuButton::new(
-            Rect::new(100, 100, 100, 200),
+            Rect::new(10, 10, 10, 20),
             "Start",
             Box::new(|gi: &mut GameInfo| {
                 gi.game_state_handler
@@ -59,8 +60,9 @@ impl<'g> GameState<'g> for HomeState<'g> {
     // }
     fn run(&mut self, gi: &mut GameInfo<'g>, delta_time: f32, canvas: &mut Canvas<Window>) {
         let mouse_state = gi.input.mouse_state.clone();
+        let camera = gi.camera.clone();
         for button in self.buttons.iter_mut() {
-            button.press(&mouse_state, gi, None);
+            button.press(&mouse_state, gi, Some(&camera));
             button.draw(canvas, &gi.camera);
         }
         canvas.set_draw_color(self.color);

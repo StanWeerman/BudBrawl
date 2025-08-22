@@ -23,7 +23,8 @@ pub trait Button<'b> {
     fn action(&mut self, input: &mut Self::Input);
     fn draw(&self, canvas: &mut Canvas<Window>, camera: &Camera) {
         let (pressed, hovered) = self.get_pressed();
-        let (rect, text) = self.get_draw_values();
+        let (mut rect, text) = self.get_draw_values();
+        camera.ui_rect_to_camera(&mut rect);
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         canvas.fill_rect(rect).unwrap();
         if pressed {
@@ -74,7 +75,13 @@ pub trait Button<'b> {
         self.get_pressed()
     }
     fn in_bounds(&self, mouse_x: i32, mouse_y: i32, camera: Option<&Camera>) -> bool {
-        let (rect, text) = self.get_draw_values();
+        let (mut rect, text) = self.get_draw_values();
+        println!("Initial: {:?}", rect);
+
+        if let Some(camera) = camera {
+            camera.ui_rect_to_camera(&mut rect);
+        }
+        println!("Final: {:?}", rect);
         (mouse_x >= rect.left() && mouse_x <= rect.right())
             && (mouse_y >= rect.top() && mouse_y <= rect.bottom())
     }
