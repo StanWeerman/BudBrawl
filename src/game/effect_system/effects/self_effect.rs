@@ -35,7 +35,6 @@ impl DamageEffect {
 
 impl<'g> Effect<'g> for DamageEffect {
     fn is_active(&self) -> bool {
-        println!("hello world, {}", self.applications);
         self.applications > 0
     }
 

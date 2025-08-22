@@ -1,5 +1,6 @@
 use std::{
     cell::{Cell, RefCell},
+    ops::Deref,
     rc::Rc,
 };
 
@@ -39,7 +40,7 @@ pub struct Bud<'g> {
     active: bool,
 }
 impl<'g> Bud<'g> {
-    pub fn new(position: Point, initial_blud_data: Rc<InitialBudData<'g>>) -> Self {
+    pub fn new(position: Point, initial_blud_data: InitialBudData<'g>) -> Self {
         Self {
             position,
             bud_data: Rc::new(RefCell::new(BudData::default(initial_blud_data))),
@@ -114,6 +115,13 @@ impl<'g> Bud<'g> {
         self.effects.push(eff);
     }
     pub fn apply_effects(&mut self) {
+        for i in 0..3 {
+            let new_effect = self.bud_data.borrow_mut().initial.effects[i]
+                .clone()
+                .unwrap();
+            new_effect.borrow_mut().apply(Rc::clone(&self.bud_data));
+        }
+
         self.effects
             .iter_mut()
             .filter(|eff| eff.is_active())
@@ -174,6 +182,8 @@ impl<'g> GameObject<'g> for Bud<'g> {
         msh: &mut MenuStateHandler<'g>,
     ) -> bool {
         self.active = true;
+        self.apply_effects();
+
         println!(
             "Start Turn! This is bud {}, with {} health.",
             self.bud_data.borrow().initial.name,
@@ -183,7 +193,6 @@ impl<'g> GameObject<'g> for Bud<'g> {
         msh.load_menu(MenuStateEnum::Bud(BudEnum::LeftBud(Some(Rc::clone(
             &self.bud_data,
         )))));
-        self.apply_effects();
         true
     }
     fn end(
@@ -264,7 +273,7 @@ impl<'g> Button<'g> for Bud<'g> {
 }
 
 pub struct BudData<'g> {
-    pub initial: Rc<InitialBudData<'g>>,
+    pub initial: InitialBudData<'g>,
     selected: bool,
     health: u16,
     speed: u16,
@@ -286,7 +295,7 @@ impl<'g> BudData<'g> {
         self.speed = self.initial.max_speed;
     }
 
-    fn default(initial: Rc<InitialBudData<'g>>) -> BudData<'g> {
+    fn default(initial: InitialBudData<'g>) -> BudData<'g> {
         BudData {
             initial,
             selected: false,
@@ -324,7 +333,11 @@ impl<'g> InitialBudData<'g> {
             index,
             team,
             rounds: 0,
-            effects: [None, None, None],
+            effects: [
+                Some(Rc::new(RefCell::new(DamageEffect::new(1)))),
+                Some(Rc::new(RefCell::new(DamageEffect::new(1)))),
+                Some(Rc::new(RefCell::new(DamageEffect::new(1)))),
+            ],
             name,
         }
     }

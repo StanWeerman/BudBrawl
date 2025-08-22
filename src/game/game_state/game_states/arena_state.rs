@@ -110,7 +110,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
 
         // Team 0
         for (i, initial_bud_data) in self.initial_buds_tuple.0.iter().enumerate() {
-            let mut bud = Bud::new(Point::new(0, i as i32), Rc::new(initial_bud_data.clone()));
+            let mut bud = Bud::new(Point::new(0, i as i32), initial_bud_data.clone());
             let _bud = Rc::new(RefCell::new(bud));
             let __bud = Rc::clone(&_bud);
             let ___bud = Rc::clone(&__bud);
@@ -122,7 +122,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
 
         // Team 1
         for (i, initial_bud_data) in self.initial_buds_tuple.1.iter().enumerate() {
-            let mut bud = Bud::new(Point::new(10, i as i32), Rc::new(initial_bud_data.clone()));
+            let mut bud = Bud::new(Point::new(10, i as i32), initial_bud_data.clone());
             let _bud = Rc::new(RefCell::new(bud));
             let __bud = Rc::clone(&_bud);
             let ___bud = Rc::clone(&__bud);
