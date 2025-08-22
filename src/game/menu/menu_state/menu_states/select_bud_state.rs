@@ -2,6 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use sdl2::{
     gfx::primitives::DrawRenderer,
+    image::LoadTexture,
     rect::{Point, Rect},
     render::Canvas,
     video::Window,
@@ -24,7 +25,7 @@ pub struct SelectBudState<'g> {
     select_info: Option<Rc<RefCell<SelectInfo<'g>>>>,
     full_buttons: Vec<MenuButton<SelectInfo<'g>>>,
     edit_buttons: Vec<MenuButton<SelectInfo<'g>>>,
-    trait_buttons: Vec<HoverMenuButton<SelectInfo<'g>>>,
+    trait_buttons: Vec<HoverMenuButton<'g, SelectInfo<'g>>>,
 }
 
 impl<'g> SelectBudState<'g> {
@@ -98,101 +99,12 @@ impl<'g> SelectBudState<'g> {
 
         let mut trait_buttons = Vec::new();
 
-        trait_buttons.push(HoverMenuButton::new(
-            Rect::new(20, 20, 10, 10),
-            "Fighter",
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
-                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
-                }
-            }),
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                select_info.trait_description = String::from("Increase buds damage by +1.");
-            }),
-        ));
-        trait_buttons.push(HoverMenuButton::new(
-            Rect::new(20, 30, 10, 10),
-            "Bulwark",
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
-                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
-                }
-            }),
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                select_info.trait_description =
-                    String::from("Increase buds health by +1. (Increases weight)");
-            }),
-        ));
-        trait_buttons.push(HoverMenuButton::new(
-            Rect::new(20, 40, 10, 10),
-            "Scout",
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
-                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
-                }
-            }),
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                select_info.trait_description =
-                    String::from("Increase buds speed by +1. (Decreases weight)");
-            }),
-        ));
-        trait_buttons.push(HoverMenuButton::new(
-            Rect::new(20, 50, 10, 10),
-            "Mending",
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
-                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
-                }
-            }),
-            Box::new(|select_info: &mut SelectInfo<'g>| {
-                select_info.trait_description =
-                    String::from("Restore +1 health at the start of each turn.");
-            }),
-        ));
-
         Self {
             select_info: None,
             full_buttons,
             edit_buttons,
             trait_buttons,
         }
-    }
-    fn draw_initial_bud_data(
-        initial_bud_data: &InitialBudData<'g>,
-        index: i16,
-        canvas: &mut Canvas<Window>,
-        camera: &Camera,
-    ) {
-        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-        let mut rect = Rect::new(20 * index as i32, 20, 20, 60);
-        camera.ui_rect_to_camera(&mut rect);
-        rect.x += 1;
-        rect.y += 1;
-        rect.w -= 2;
-        rect.h -= 2;
-        canvas.draw_rect(rect);
-
-        let mut point = Point::new(20 * index as i32 + 1, 21);
-        camera.ui_point_to_camera(&mut point);
-        canvas.string(
-            point.x as i16,
-            point.y as i16,
-            &initial_bud_data.name,
-            sdl2::pixels::Color::RGB(0, 0, 0),
-        );
-
-        let mut point = Point::new(20 * index as i32 + 1, 24);
-        camera.ui_point_to_camera(&mut point);
-        canvas.string(
-            point.x as i16,
-            point.y as i16,
-            &format!(
-                "Team {} | Bud {}",
-                initial_bud_data.team + 1,
-                initial_bud_data.index + 1
-            ),
-            sdl2::pixels::Color::RGB(0, 0, 0),
-        );
     }
 }
 
@@ -206,6 +118,94 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
         match menu_state_enum {
             MenuStateEnum::InitialBudDatas(select_info) => {
                 self.select_info = Some(Rc::clone(select_info));
+                let select_info = select_info.borrow_mut();
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(20, 20, 10, 10),
+                    "Fighter",
+                    Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("fighter") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from("Increase buds damage by +1.");
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(20, 30, 10, 10),
+                    "Bulwark",
+                    Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("bulwark") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description =
+                            String::from("Increase buds health by +1. (Increases weight)");
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(20, 40, 10, 10),
+                    "Scout",
+                    Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("scout") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description =
+                            String::from("Increase buds speed by +1. (Decreases weight)");
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(20, 50, 10, 10),
+                    "Mending",
+                    Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("mending") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description =
+                            String::from("Restore +1 health at the start of each turn.");
+                    }),
+                ));
             }
             _ => unreachable!(),
         }
@@ -233,17 +233,11 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
 
                     button.draw(canvas, &gi.camera);
                 }
-                let initial_buds_tuple = if select_info.team == 0 {
-                    &mut select_info.initial_buds_tuple.0
-                } else {
-                    &mut select_info.initial_buds_tuple.1
-                };
-                Self::draw_initial_bud_data(
-                    &initial_buds_tuple[current_bud],
-                    0,
-                    canvas,
-                    &gi.camera,
-                );
+
+                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
+                    current_initial_bud_data.draw_initial_bud_data(0, canvas, &gi.camera);
+                }
+
                 let mut rect = Rect::new(80, 20, 20, 60);
                 gi.camera.ui_rect_to_camera(&mut rect);
                 canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
@@ -273,12 +267,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         &mut select_info.initial_buds_tuple.1
                     };
                     for (i, initial_bud_data) in initial_bud_datas.iter_mut().enumerate() {
-                        Self::draw_initial_bud_data(
-                            &initial_bud_data,
-                            i as i16,
-                            canvas,
-                            &gi.camera,
-                        );
+                        initial_bud_data.draw_initial_bud_data(i as i32, canvas, &gi.camera);
                     }
                 }
             }

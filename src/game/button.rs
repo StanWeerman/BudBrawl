@@ -76,12 +76,9 @@ pub trait Button<'b> {
     }
     fn in_bounds(&self, mouse_x: i32, mouse_y: i32, camera: Option<&Camera>) -> bool {
         let (mut rect, text) = self.get_draw_values();
-        println!("Initial: {:?}", rect);
-
         if let Some(camera) = camera {
             camera.ui_rect_to_camera(&mut rect);
         }
-        println!("Final: {:?}", rect);
         (mouse_x >= rect.left() && mouse_x <= rect.right())
             && (mouse_y >= rect.top() && mouse_y <= rect.bottom())
     }
@@ -140,18 +137,20 @@ impl<'b, T> Button<'b> for MenuButton<T> {
     type Input = T;
 }
 
-pub struct HoverMenuButton<T> {
+pub struct HoverMenuButton<'t, T> {
     pressed: bool,
     hovered: bool,
     rect: Rect,
     text: &'static str,
+    texture: Rc<Texture<'t>>,
     pub action: Box<dyn Fn(&mut T)>,
     pub hover_action: Box<dyn Fn(&mut T)>,
 }
-impl<'t, T> HoverMenuButton<T> {
+impl<'t, T> HoverMenuButton<'t, T> {
     pub fn new(
         rect: Rect,
         text: &'static str,
+        texture: Rc<Texture<'t>>,
         action: Box<dyn Fn(&mut T)>,
         hover_action: Box<dyn Fn(&mut T)>,
         // gi: &GameInfo<'t>,
@@ -166,13 +165,14 @@ impl<'t, T> HoverMenuButton<T> {
             hovered: false,
             rect,
             text,
+            texture,
             action,
             hover_action,
         }
     }
 }
 
-impl<'b, T> Button<'b> for HoverMenuButton<T> {
+impl<'b, T> Button<'b> for HoverMenuButton<'b, T> {
     fn get_pressed(&self) -> (bool, bool) {
         (self.hovered, self.pressed)
     }

@@ -105,11 +105,11 @@ impl Camera {
         // rect.y = y as i32;
     }
     pub fn ui_rect_to_camera(&self, rect: &mut Rect) {
-        // self.ui_rect_to_camera_scaled(rect);
-        rect.x = (rect.x as f32 * self.window_size.0 as f32 / 100.0) as i32;
-        rect.w = (rect.w as f32 * self.window_size.0 as f32 / 100.0) as i32;
-        rect.y = (rect.y as f32 * self.window_size.1 as f32 / 100.0) as i32;
-        rect.h = (rect.h as f32 * self.window_size.1 as f32 / 100.0) as i32;
+        // rect.x = (rect.x as f32 * self.window_size.0 as f32 / 100.0) as i32;
+        // rect.w = (rect.w as f32 * self.window_size.0 as f32 / 100.0) as i32;
+        // rect.y = (rect.y as f32 * self.window_size.1 as f32 / 100.0) as i32;
+        // rect.h = (rect.h as f32 * self.window_size.1 as f32 / 100.0) as i32;
+        self.ui_rect_to_camera_scaled(rect);
     }
     pub fn ui_rect_to_camera_scaled(&self, rect: &mut Rect) {
         let scale = min(self.window_size.0, self.window_size.1);

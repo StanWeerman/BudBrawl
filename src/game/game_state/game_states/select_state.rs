@@ -1,6 +1,7 @@
 use rand::seq::IndexedRandom;
 use std::{
     cell::RefCell,
+    collections::HashMap,
     fs::File,
     io::{BufRead, BufReader},
     path::Path,
@@ -19,7 +20,7 @@ use sdl2::{
 
 use crate::game::{
     button::{Button, MenuButton},
-    game_info::GameInfo,
+    game_info::{make_map, GameInfo},
     game_object::game_objects::bud::InitialBudData,
     game_state::{game_states::GameStateEnum, GameState},
     menu::menu_state::menu_states::{
@@ -39,6 +40,7 @@ pub struct SelectInfo<'g> {
     pub trait_description: String,
     pub team: u8,
     pub done: bool,
+    pub icon_textures: HashMap<String, Rc<Texture<'g>>>,
 }
 
 impl<'g> SelectInfo<'g> {
@@ -79,6 +81,7 @@ impl<'g> SelectState<'g> {
                 trait_description: String::new(),
                 initial_buds_tuple: initial_buds_tuple.clone(),
                 done: false,
+                icon_textures: HashMap::new(),
             })),
             msh: MenuStateHandler::new(),
         }
@@ -123,6 +126,12 @@ impl<'g> GameState<'g> for SelectState<'g> {
                 .unwrap(),
         );
         let name_generator = NameGenerator::new("assets/names/names.txt");
+
+        self.select_info.borrow_mut().icon_textures = make_map(
+            "assets/icons",
+            &|file| Rc::new(gi.texture_creator.load_texture(&file).unwrap()),
+            &["png", "jpg", "jpeg"],
+        );
 
         Self::setup_buds(
             &mut self.select_info.borrow_mut().initial_buds_tuple.0,

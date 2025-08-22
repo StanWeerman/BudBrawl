@@ -311,6 +311,7 @@ pub struct InitialBudData<'g> {
     pub team: u8,
     pub rounds: u64,
     pub effects: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
+    pub effect_textures: [Option<Rc<Texture<'g>>>; 3],
     pub name: String,
 }
 
@@ -331,19 +332,30 @@ impl<'g> InitialBudData<'g> {
             team,
             rounds: 0,
             effects: [None, None, None],
+            effect_textures: [None, None, None],
             name,
         }
     }
-    pub fn add_effect(&mut self, new_effect: Rc<RefCell<dyn Effect<'g> + 'g>>) {
-        for effect in self.effects.iter_mut() {
+    pub fn add_effect(
+        &mut self,
+        new_effect: Rc<RefCell<dyn Effect<'g> + 'g>>,
+        tex: Option<Rc<Texture<'g>>>,
+    ) {
+        for (i, effect) in self.effects.iter_mut().enumerate() {
             if effect.is_none() {
                 *effect = Some(Rc::clone(&new_effect));
+                // println!("Working");
+                if tex.is_some() {
+                    println!("Working");
+                    self.effect_textures[i] = Some(Rc::clone(&tex.unwrap()));
+                }
                 break;
             }
         }
     }
     pub fn clear_effects(&mut self) {
         self.effects = [None, None, None];
+        self.effect_textures = [None, None, None];
     }
 
     pub fn debug_effects(&self) {
@@ -355,6 +367,55 @@ impl<'g> InitialBudData<'g> {
             }
         }
         println!();
+    }
+    pub fn draw_initial_bud_data(&self, index: i32, canvas: &mut Canvas<Window>, camera: &Camera) {
+        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+        let mut rect = Rect::new(20 * index as i32, 20, 20, 60);
+        camera.ui_rect_to_camera(&mut rect);
+        rect.x += 1;
+        rect.y += 1;
+        rect.w -= 2;
+        rect.h -= 2;
+        canvas.draw_rect(rect);
+
+        let mut point = Point::new(20 * index as i32 + 1, 21);
+        camera.ui_point_to_camera(&mut point);
+        canvas.string(
+            point.x as i16,
+            point.y as i16,
+            &self.name,
+            sdl2::pixels::Color::RGB(0, 0, 0),
+        );
+
+        let mut point = Point::new(20 * index as i32 + 1, 24);
+        camera.ui_point_to_camera(&mut point);
+        canvas.string(
+            point.x as i16,
+            point.y as i16,
+            &format!("Team {} | Bud {}", self.team + 1, self.index + 1),
+            sdl2::pixels::Color::RGB(0, 0, 0),
+        );
+
+        for (i, effect_texture) in self.effect_textures.iter().enumerate() {
+            let mut rect = Rect::new(20 * index as i32 + 6 * i as i32, 40, 6, 6);
+            camera.ui_rect_to_camera(&mut rect);
+            rect.x += 2;
+            if let Some(effect_texture) = effect_texture {
+                println!("Working");
+                canvas.copy_ex(&effect_texture, None, rect, 0.0, None, false, false);
+            } else if self.effects[i].is_some() {
+                canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+                canvas.fill_rect(rect);
+            }
+            canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+            canvas.draw_rect(rect);
+            rect.x -= 1;
+            rect.y -= 1;
+            rect.w += 2;
+            rect.h += 2;
+            canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+            canvas.draw_rect(rect);
+        }
     }
 }
 
