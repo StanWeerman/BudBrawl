@@ -10,5 +10,5 @@ pub struct Tile<'g> {
 
 pub trait Effect<'g> {
     fn is_active(&self) -> bool;
-    fn apply(&self, bud: Rc<RefCell<BudData<'g>>>);
+    fn apply(&mut self, bud: Rc<RefCell<BudData<'g>>>);
 }

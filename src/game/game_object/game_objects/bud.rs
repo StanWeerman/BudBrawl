@@ -18,7 +18,7 @@ use crate::{
         button::Button,
         camera::Camera,
         collision_system::collisions::{Colliding, Collisions, Side},
-        effect_system::effects::Effect,
+        effect_system::effects::{self_effect::DamageEffect, Effect},
         game_info::GameInfo,
         game_object::{game_objects::GameObjectEnum, GameObject, SuperGameObject},
         game_state::{game_states::select_state::NameGenerator, StateInfo},
@@ -33,7 +33,7 @@ pub struct Bud<'g> {
     bud_data: Rc<RefCell<BudData<'g>>>,
     hovered: bool,
     pressed: bool,
-    effects: Vec<Rc<RefCell<dyn Effect<'g> + 'g>>>,
+    effects: Vec<Box<dyn Effect<'g> + 'g>>,
     moved: [bool; 4],
     direction: Direction,
     active: bool,
@@ -95,6 +95,11 @@ impl<'g> Bud<'g> {
             self.move_bud(moving, collisions, delta_time);
         }
     }
+    fn attack(&mut self, collisions: &mut Collisions) {
+        let attack_tile = self.position + self.direction.get_point();
+        if (collisions.impact_tile(attack_tile, Box::new(DamageEffect::new(10)))) {}
+    }
+
     pub fn move_bud(&mut self, moving: Point, collisions: &mut Collisions, delta_time: f32) {
         if collisions.check_tile(self.position + moving) {
             return;
@@ -104,13 +109,15 @@ impl<'g> Bud<'g> {
             self.position += moving;
         }
     }
-    pub fn add_effect(&mut self, eff: Rc<RefCell<dyn Effect<'g> + 'g>>) {
+    pub fn add_effect(&mut self, mut eff: Box<dyn Effect<'g> + 'g>) {
+        eff.apply(Rc::clone(&self.bud_data));
         self.effects.push(eff);
     }
     pub fn apply_effects(&mut self) {
         self.effects
-            .iter()
-            .for_each(|eff| eff.borrow().apply(Rc::clone(&self.bud_data)));
+            .iter_mut()
+            .filter(|eff| eff.is_active())
+            .for_each(|eff| eff.apply(Rc::clone(&self.bud_data)));
     }
 }
 
@@ -127,6 +134,9 @@ impl<'g> GameObject<'g> for Bud<'g> {
     }
 
     fn draw(&self, canvas: &mut Canvas<Window>, camera: &mut Camera) {
+        if self.bud_data.borrow().health == 0 {
+            return;
+        }
         // let (position, size) = self.get_draw_values();
         canvas.set_draw_color(Color::RGBA(139, 210, 241, 255));
         let mut some_rect = Rect::from_center(self.position, 16, 21);
@@ -165,8 +175,9 @@ impl<'g> GameObject<'g> for Bud<'g> {
     ) -> bool {
         self.active = true;
         println!(
-            "Start Turn! This is bud {}.",
-            self.bud_data.borrow().initial.name
+            "Start Turn! This is bud {}, with {} health.",
+            self.bud_data.borrow().initial.name,
+            self.bud_data.borrow().health
         );
 
         msh.load_menu(MenuStateEnum::Bud(BudEnum::LeftBud(Some(Rc::clone(
@@ -175,8 +186,16 @@ impl<'g> GameObject<'g> for Bud<'g> {
         self.apply_effects();
         true
     }
-    fn end(&mut self) -> bool {
+    fn end(
+        &mut self,
+        _delta_time: f32,
+        collisions: &mut Collisions,
+        gi: &mut GameInfo<'g>,
+        si: &mut StateInfo<'g>,
+        msh: &mut MenuStateHandler<'g>,
+    ) -> bool {
         self.active = false;
+        self.attack(collisions);
         println!("End Turn!");
         self.bud_data.borrow_mut().reset();
         return true;
@@ -252,6 +271,11 @@ pub struct BudData<'g> {
 }
 
 impl<'g> BudData<'g> {
+    pub fn remove_health(&mut self, dmg: u16) {
+        if self.health >= dmg {
+            self.health -= dmg;
+        }
+    }
     pub fn select(&mut self) {
         self.selected = true;
     }
@@ -267,7 +291,7 @@ impl<'g> BudData<'g> {
             initial,
             selected: false,
             health: 10,
-            speed: 3,
+            speed: 20,
         }
     }
 }
@@ -306,13 +330,12 @@ impl<'g> InitialBudData<'g> {
     }
 }
 
-impl<'g> Colliding for Bud<'g> {
-    fn has_collided(&mut self, other: &dyn Colliding) {
-        todo!()
+impl<'g> Colliding<'g> for Bud<'g> {
+    fn on_effected(&mut self, effect: Box<dyn Effect<'g> + 'g>) {
+        self.add_effect(effect);
     }
 
     fn get_collider(&self) -> Point {
-        println!("WHY IS IT, {} {}", self.position.x, self.position.y);
         self.position
     }
 }
@@ -322,4 +345,15 @@ pub enum Direction {
     Right,
     Left,
     Down,
+}
+
+impl Direction {
+    fn get_point(&self) -> Point {
+        match self {
+            Direction::Up => Point::new(0, -1),
+            Direction::Right => Point::new(1, 0),
+            Direction::Left => Point::new(-1, 0),
+            Direction::Down => Point::new(0, 1),
+        }
+    }
 }

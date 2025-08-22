@@ -8,6 +8,7 @@ use std::rc::Rc;
 use sdl2::rect::Point;
 use sdl2::sys::SDL_atan2;
 
+use crate::game::effect_system::effects::Effect;
 use crate::vector2d::Vector2d;
 
 // pub enum ColliderType {
@@ -15,9 +16,9 @@ use crate::vector2d::Vector2d;
 //     Semi,
 // }
 
-pub trait Colliding {
-    fn has_collided(&mut self, other: &dyn Colliding);
+pub trait Colliding<'g> {
     fn get_collider(&self) -> Point;
+    fn on_effected(&mut self, effect: Box<dyn Effect<'g> + 'g>);
     //fn get_velocity(&self) -> Vector2d;
     // fn get_move_vector(&self) -> Option<Rc<RefCell<Vector2d>>> {
     //     None
@@ -51,14 +52,14 @@ impl Not for Side {
 }
 
 pub struct Collisions<'r> {
-    colliders: Vec<Rc<RefCell<dyn Colliding + 'r>>>,
+    colliders: Vec<Rc<RefCell<dyn Colliding<'r> + 'r>>>,
 }
 
 impl<'r> Collisions<'r> {
-    pub fn new(colliders: Vec<Rc<RefCell<dyn Colliding + 'r>>>) -> Self {
+    pub fn new(colliders: Vec<Rc<RefCell<dyn Colliding<'r> + 'r>>>) -> Self {
         Collisions { colliders }
     }
-    pub fn add(&mut self, col: Rc<RefCell<dyn Colliding + 'r>>) {
+    pub fn add(&mut self, col: Rc<RefCell<dyn Colliding<'r> + 'r>>) {
         self.colliders.push(col);
     }
     pub fn test(&self) {
@@ -79,9 +80,23 @@ impl<'r> Collisions<'r> {
             match other.try_borrow_mut() {
                 Ok(mut val) => {
                     let other_col = val.get_collider();
-                    println!("{},{} .  {}, {}", other_col.x, other_col.y, this.x, this.y);
                     if other_col.x == this.x && other_col.y == this.y {
-                        println!("HM");
+                        return true;
+                    }
+                }
+                Err(_) => continue,
+            }
+        }
+        false
+    }
+
+    pub fn impact_tile(&mut self, this: Point, effect: Box<dyn Effect<'r> + 'r>) -> bool {
+        for other in &self.colliders {
+            match other.try_borrow_mut() {
+                Ok(mut val) => {
+                    let other_col = val.get_collider();
+                    if other_col.x == this.x && other_col.y == this.y {
+                        val.on_effected(effect);
                         return true;
                     }
                 }

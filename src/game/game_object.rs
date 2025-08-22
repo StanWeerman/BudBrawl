@@ -95,7 +95,14 @@ pub trait GameObject<'g> {
     ) -> bool {
         true
     }
-    fn end(&mut self) -> bool {
+    fn end(
+        &mut self,
+        _delta_time: f32,
+        collisions: &mut Collisions,
+        gi: &mut GameInfo<'g>,
+        si: &mut StateInfo<'g>,
+        msh: &mut MenuStateHandler<'g>,
+    ) -> bool {
         true
     }
     fn update(
