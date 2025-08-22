@@ -132,3 +132,63 @@ impl<'b, T> Button<'b> for MenuButton<T> {
 
     type Input = T;
 }
+
+pub struct HoverMenuButton<T> {
+    pressed: bool,
+    hovered: bool,
+    rect: Rect,
+    text: &'static str,
+    pub action: Box<dyn Fn(&mut T)>,
+    pub hover_action: Box<dyn Fn(&mut T)>,
+}
+impl<'t, T> HoverMenuButton<T> {
+    pub fn new(
+        rect: Rect,
+        text: &'static str,
+        action: Box<dyn Fn(&mut T)>,
+        hover_action: Box<dyn Fn(&mut T)>,
+        // gi: &GameInfo<'t>,
+    ) -> Self {
+        // let mut tex = None;
+        // if let Some(tex_) = gi.textures.get(text) {
+        //     tex = Some(Rc::clone(tex_));
+        // }
+        Self {
+            // tex,
+            pressed: false,
+            hovered: false,
+            rect,
+            text,
+            action,
+            hover_action,
+        }
+    }
+}
+
+impl<'b, T> Button<'b> for HoverMenuButton<T> {
+    fn get_pressed(&self) -> (bool, bool) {
+        (self.hovered, self.pressed)
+    }
+
+    fn set_hovered(&mut self, hovered: bool) {
+        self.hovered = hovered;
+    }
+
+    fn set_pressed(&mut self, pressed: bool) {
+        self.pressed = pressed;
+    }
+
+    fn get_draw_values(&self) -> (Rect, &str) {
+        (self.rect, self.text)
+    }
+
+    fn hover_action(&mut self, input: &mut Self::Input) {
+        (&self.hover_action)(input);
+    }
+
+    fn action(&mut self, input: &mut Self::Input) {
+        (&self.action)(input);
+    }
+
+    type Input = T;
+}

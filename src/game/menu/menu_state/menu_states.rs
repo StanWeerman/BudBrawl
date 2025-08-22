@@ -3,7 +3,7 @@ use std::{cell::RefCell, cmp, collections::HashMap, hash::Hash, rc::Rc};
 use crate::game::{
     game_info::GameInfo,
     game_object::game_objects::bud::{BudData, InitialBudData},
-    game_state::GameState,
+    game_state::{game_states::select_state::SelectInfo, GameState},
     menu::menu_state::MenuState,
 };
 
@@ -83,7 +83,7 @@ impl<'g> MenuStateHandler<'g> {
 
 pub enum MenuStateEnum<'g> {
     Bud(BudEnum<'g>),
-    InitialBudDatas((u8, Rc<RefCell<Vec<InitialBudData<'g>>>>)),
+    InitialBudDatas((Rc<RefCell<SelectInfo<'g>>>)),
 }
 pub enum BudEnum<'g> {
     LeftBud(Option<Rc<RefCell<BudData<'g>>>>),

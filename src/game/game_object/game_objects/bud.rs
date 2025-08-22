@@ -170,8 +170,6 @@ impl<'g> GameObject<'g> for Bud<'g> {
             false,
             false,
         );
-
-        // canvas.draw_point(some_rect.top_left() + Point::new(10, 0));
     }
     fn start(
         &mut self,
@@ -312,8 +310,8 @@ pub struct InitialBudData<'g> {
     max_speed: u16,
     pub index: u8,
     pub team: u8,
-    rounds: u64,
-    effects: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
+    pub rounds: u64,
+    pub effects: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
     pub name: String,
 }
 
@@ -340,6 +338,28 @@ impl<'g> InitialBudData<'g> {
             ],
             name,
         }
+    }
+    pub fn add_effect(&mut self, new_effect: Rc<RefCell<dyn Effect<'g> + 'g>>) {
+        for effect in self.effects.iter_mut() {
+            if effect.is_none() {
+                *effect = Some(Rc::clone(&new_effect));
+                break;
+            }
+        }
+    }
+    pub fn clear_effects(&mut self) {
+        self.effects = [None, None, None];
+    }
+
+    pub fn debug_effects(&self) {
+        for effect in self.effects.iter() {
+            if effect.is_none() {
+                print!("None ");
+            } else {
+                print!("Some ");
+            }
+        }
+        println!();
     }
 }
 
