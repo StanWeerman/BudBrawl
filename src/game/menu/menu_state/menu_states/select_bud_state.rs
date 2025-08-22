@@ -25,7 +25,7 @@ impl<'g> SelectBudState<'g> {
     pub fn new(gi: &mut GameInfo<'g>) -> Self {
         let mut full_buttons = Vec::new();
         full_buttons.push(MenuButton::new(
-            Rect::new(0, 50, 100, 100),
+            Rect::new(500, 700, 500, 200),
             "Confirm",
             Box::new(|select_info: &mut SelectInfo<'g>| {
                 if select_info.team == 0 {
@@ -36,36 +36,36 @@ impl<'g> SelectBudState<'g> {
             }),
         ));
         full_buttons.push(MenuButton::new(
-            Rect::new(200 * 0, 850, 100, 100),
-            "Edit",
+            Rect::new(200 * 0, 100, 200, 600),
+            "",
             Box::new(|select_info: &mut SelectInfo<'g>| {
                 select_info.current_bud = Some(0);
             }),
         ));
         full_buttons.push(MenuButton::new(
-            Rect::new(200 * 1, 850, 100, 100),
-            "Edit",
+            Rect::new(200 * 1, 100, 200, 600),
+            "",
             Box::new(|select_info: &mut SelectInfo<'g>| {
                 select_info.current_bud = Some(1);
             }),
         ));
         full_buttons.push(MenuButton::new(
-            Rect::new(200 * 2, 850, 100, 100),
-            "Edit",
+            Rect::new(200 * 2, 100, 200, 600),
+            "",
             Box::new(|select_info: &mut SelectInfo<'g>| {
                 select_info.current_bud = Some(2);
             }),
         ));
         full_buttons.push(MenuButton::new(
-            Rect::new(200 * 3, 850, 100, 100),
-            "Edit",
+            Rect::new(200 * 3, 100, 200, 600),
+            "",
             Box::new(|select_info: &mut SelectInfo<'g>| {
                 select_info.current_bud = Some(3);
             }),
         ));
         full_buttons.push(MenuButton::new(
-            Rect::new(200 * 4, 850, 100, 100),
-            "Edit",
+            Rect::new(200 * 4, 100, 200, 600),
+            "",
             Box::new(|select_info: &mut SelectInfo<'g>| {
                 select_info.current_bud = Some(4);
             }),
@@ -104,6 +104,45 @@ impl<'g> SelectBudState<'g> {
                 select_info.trait_description = String::from("Increase buds damage by +1.");
             }),
         ));
+        trait_buttons.push(HoverMenuButton::new(
+            Rect::new(200, 300, 100, 100),
+            "Bulwark",
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
+                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
+                }
+            }),
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                select_info.trait_description =
+                    String::from("Increase buds health by +1. (Increases weight)");
+            }),
+        ));
+        trait_buttons.push(HoverMenuButton::new(
+            Rect::new(200, 400, 100, 100),
+            "Scout",
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
+                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
+                }
+            }),
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                select_info.trait_description =
+                    String::from("Increase buds speed by +1. (Decreases weight)");
+            }),
+        ));
+        trait_buttons.push(HoverMenuButton::new(
+            Rect::new(200, 500, 100, 100),
+            "Mending",
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
+                    current_initial_bud_data.add_effect(Rc::new(RefCell::new(SelfEffect::new())));
+                }
+            }),
+            Box::new(|select_info: &mut SelectInfo<'g>| {
+                select_info.trait_description =
+                    String::from("Restore +1 health at the start of each turn.");
+            }),
+        ));
 
         Self {
             select_info: None,
@@ -117,15 +156,17 @@ impl<'g> SelectBudState<'g> {
         index: i16,
         canvas: &mut Canvas<Window>,
     ) {
+        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+        canvas.draw_rect(Rect::new(200 * index as i32 + 1, 100 + 1, 200 - 2, 600 - 2));
         canvas.string(
-            200 * index,
-            750,
+            200 * index + 10,
+            110,
             &initial_bud_data.name,
             sdl2::pixels::Color::RGB(0, 0, 0),
         );
         canvas.string(
-            200 * index,
-            800,
+            200 * index + 10,
+            140,
             &format!(
                 "Team {} | Bud {}",
                 initial_bud_data.team + 1,
@@ -185,6 +226,9 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                     &select_info.trait_description,
                     sdl2::pixels::Color::RGB(0, 0, 0),
                 );
+                // if let Some(current_initial_bud_data) = select_info.get_current_initial_bud_data() {
+                //     current_initial_bud_data.debug_effects();
+                // }
             } else {
                 // Viewing All Buds
                 for button in self.full_buttons.iter_mut() {

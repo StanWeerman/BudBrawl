@@ -161,7 +161,6 @@ impl<'g> GameState<'g> for SelectState<'g> {
             )));
         }
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 255, 0));
-        canvas.draw_rect(Rect::new(10, 10, 100, 100));
         canvas.string(0, 0, "Select", sdl2::pixels::Color::RGB(0, 255, 0));
 
         self.msh.handle_state(gi, delta_time, canvas);
