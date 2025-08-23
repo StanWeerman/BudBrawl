@@ -13,7 +13,7 @@ use crate::game::{
     camera::Camera,
     effect_system::effects::self_effect::SelfEffect,
     game_info::GameInfo,
-    game_object::game_objects::bud::{Bud, BudData, InitialBudData},
+    game_object::game_objects::bud::{bud_data::BudData, bud_data::InitialBudData, Bud},
     game_state::game_states::select_state::SelectInfo,
     menu::menu_state::{
         menu_states::{BudEnum, MenuStateEnum},
@@ -165,7 +165,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                 self.trait_buttons.push(HoverMenuButton::new(
                     Rect::new(20, 40, 10, 10),
                     "Scout",
-                    Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
+                    Rc::clone(select_info.icon_textures.get("scout").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
                         let tex = if let Some(tex) = select_info.icon_textures.get("scout") {
                             Some(Rc::clone(tex))
@@ -187,7 +187,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                 self.trait_buttons.push(HoverMenuButton::new(
                     Rect::new(20, 50, 10, 10),
                     "Mending",
-                    Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
+                    Rc::clone(select_info.icon_textures.get("mending").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
                         let tex = if let Some(tex) = select_info.icon_textures.get("mending") {
                             Some(Rc::clone(tex))

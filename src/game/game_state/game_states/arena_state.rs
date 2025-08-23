@@ -18,7 +18,7 @@ use crate::{
         game_info::GameInfo,
         game_object::{
             game_objects::{
-                bud::{Bud, InitialBudData},
+                bud::{bud_data::InitialBudData, Bud},
                 ground::Ground,
             },
             GameObject,

@@ -21,7 +21,7 @@ use sdl2::{
 use crate::game::{
     button::{Button, MenuButton},
     game_info::{make_map, GameInfo},
-    game_object::game_objects::bud::InitialBudData,
+    game_object::game_objects::bud::bud_data::InitialBudData,
     game_state::{game_states::GameStateEnum, GameState},
     menu::menu_state::menu_states::{
         select_bud_state::SelectBudState, MenuStateEnum, MenuStateHandler,

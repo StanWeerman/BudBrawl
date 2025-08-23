@@ -1,6 +1,8 @@
 use std::{cell::RefCell, cmp, collections::HashMap, hash::Hash, rc::Rc};
 
-use crate::game::{game_object::game_objects::bud::InitialBudData, game_state::GameState};
+use crate::game::{
+    game_object::game_objects::bud::bud_data::InitialBudData, game_state::GameState,
+};
 
 pub mod arena_state;
 pub mod home_state;

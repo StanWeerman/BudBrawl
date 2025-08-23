@@ -5,7 +5,7 @@ use dyn_clone::DynClone;
 use crate::game::{
     collision_system::collisions::Colliding,
     effect_system::effects::{self_effect::DamageEffect, Effect},
-    game_object::game_objects::bud::BudData,
+    game_object::game_objects::bud::bud_data::BudData,
 };
 #[derive(Clone)]
 pub struct AuraEffect<'r> {
