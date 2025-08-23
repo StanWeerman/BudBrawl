@@ -198,5 +198,39 @@ impl<'b, T> Button<'b> for HoverMenuButton<'b, T> {
         (&self.action)(input);
     }
 
+    fn draw(&self, canvas: &mut Canvas<Window>, camera: &Camera) {
+        let (pressed, hovered) = self.get_pressed();
+        let (mut rect, text) = self.get_draw_values();
+        let mut text_rect = rect.clone();
+        rect.x += 2;
+        rect.y += 2;
+        rect.w -= 4;
+        rect.h -= 4;
+        camera.ui_rect_to_camera(&mut rect);
+        canvas.set_draw_color(Color::RGB(255, 255, 255));
+        canvas.fill_rect(rect).unwrap();
+        if pressed {
+            canvas.set_draw_color(Color::RGB(0, 0, 0));
+        } else if hovered {
+            canvas.set_draw_color(Color::RGB(0, 0, 255));
+        } else {
+            canvas.set_draw_color(Color::RGB(255, 0, 0));
+        }
+        canvas.draw_rect(rect).unwrap();
+
+        rect.x += 1;
+        rect.y += 1;
+        rect.w -= 2;
+        rect.h -= 2;
+        canvas.copy_ex(&self.texture, None, rect, 0.0, None, false, false);
+        camera.ui_rect_to_camera(&mut text_rect);
+        canvas.string(
+            text_rect.x as i16,
+            text_rect.y as i16,
+            &text,
+            Color::RGB(0, 0, 0),
+        );
+    }
+
     type Input = T;
 }
