@@ -298,6 +298,190 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         );
                     }),
                 ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(40, 20, 10, 10),
+                    "Inspiring",
+                    Rc::clone(select_info.icon_textures.get("emergency").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("emergency") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "Rally fellow buds +1 tile(s) around bud, giving them the Fighter trait.",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(40, 30, 10, 10),
+                    "Imposing",
+                    Rc::clone(select_info.icon_textures.get("lone_wolf").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("lone_wolf") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "Rally fellow buds +1 tile(s) around bud, giving them the Bulwark trait.",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(40, 40, 10, 10),
+                    "Peloton",
+                    Rc::clone(select_info.icon_textures.get("peloton").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("peloton") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "Rally fellow buds +1 tile(s) around bud, giving them the Scout trait.",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(40, 50, 10, 10),
+                    "Rejuvenating",
+                    Rc::clone(select_info.icon_textures.get("rejuvenating").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("rejuvenating") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "Rally fellow buds +1 tile(s) around bud, giving them the Mending trait.",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(50, 20, 10, 10),
+                    "Berserker",
+                    Rc::clone(select_info.icon_textures.get("rejuvenating").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("rejuvenating") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "When a fellow bud has Fighter +1 tile(s) around bud, steal the trait",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(50, 30, 10, 10),
+                    "Glutton",
+                    Rc::clone(select_info.icon_textures.get("lone_wolf").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("lone_wolf") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "When a fellow bud has Bulwark +1 tile(s) around bud, steal the trait",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(50, 40, 10, 10),
+                    "First Place",
+                    Rc::clone(select_info.icon_textures.get("first_place").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("first_place") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "When a fellow bud has Scout +1 tile(s) around bud, steal the trait",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(50, 50, 10, 10),
+                    "Parasite",
+                    Rc::clone(select_info.icon_textures.get("rejuvenating").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("rejuvenating") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "When a fellow bud has Mending +1 tile(s) around bud, steal the trait",
+                        );
+                    }),
+                ));
             }
             _ => unreachable!(),
         }
