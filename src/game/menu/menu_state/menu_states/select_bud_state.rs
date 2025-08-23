@@ -172,7 +172,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                 ));
 
                 self.trait_buttons.push(HoverMenuButton::new(
-                    Rect::new(20, 20, 10, 10),
+                    Rect::new(20, 20, 12, 12),
                     "Fighter",
                     Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -193,7 +193,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                     }),
                 ));
                 self.trait_buttons.push(HoverMenuButton::new(
-                    Rect::new(20, 30, 10, 10),
+                    Rect::new(20, 30, 12, 12),
                     "Bulwark",
                     Rc::clone(select_info.icon_textures.get("bulwark").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -215,7 +215,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                     }),
                 ));
                 self.trait_buttons.push(HoverMenuButton::new(
-                    Rect::new(20, 40, 10, 10),
+                    Rect::new(20, 40, 12, 12),
                     "Scout",
                     Rc::clone(select_info.icon_textures.get("scout").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -236,7 +236,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                     }),
                 ));
                 self.trait_buttons.push(HoverMenuButton::new(
-                    Rect::new(20, 50, 10, 10),
+                    Rect::new(20, 50, 12, 12),
                     "Mending",
                     Rc::clone(select_info.icon_textures.get("mending").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -258,7 +258,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                     }),
                 ));
                 self.trait_buttons.push(HoverMenuButton::new(
-                    Rect::new(30, 20, 10, 10),
+                    Rect::new(30, 20, 12, 12),
                     "Enrage",
                     Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -281,7 +281,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                     }),
                 ));
                 self.trait_buttons.push(HoverMenuButton::new(
-                    Rect::new(30, 30, 10, 10),
+                    Rect::new(30, 30, 12, 12),
                     "Lone Wolf",
                     Rc::clone(select_info.icon_textures.get("lone_wolf").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
