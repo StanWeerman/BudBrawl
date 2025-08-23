@@ -206,6 +206,98 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             String::from("Restore +1 health at the start of each turn.");
                     }),
                 ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(30, 20, 10, 10),
+                    "Enrage",
+                    Rc::clone(select_info.icon_textures.get("fighter").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("fighter") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "For every bud less in your band, bud gains +1 Fighter trait.",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(30, 30, 10, 10),
+                    "Lone Wolf",
+                    Rc::clone(select_info.icon_textures.get("lone_wolf").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("lone_wolf") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "For every bud less in your band, bud gains +1 Bulwark trait.",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(30, 40, 10, 10),
+                    "Chicken",
+                    Rc::clone(select_info.icon_textures.get("chicken").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("chicken") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "For every bud less in your band, bud gains +1 Scout trait.",
+                        );
+                    }),
+                ));
+                self.trait_buttons.push(HoverMenuButton::new(
+                    Rect::new(30, 50, 10, 10),
+                    "Emergency",
+                    Rc::clone(select_info.icon_textures.get("emergency").unwrap()),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("emergency") {
+                            Some(Rc::clone(tex))
+                        } else {
+                            None
+                        };
+                        if let Some(current_initial_bud_data) =
+                            select_info.get_current_initial_bud_data()
+                        {
+                            current_initial_bud_data
+                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                        }
+                    }),
+                    Box::new(|select_info: &mut SelectInfo<'g>| {
+                        select_info.trait_description = String::from(
+                            "For every bud less in your band, bud gains +1 Mending trait.",
+                        );
+                    }),
+                ));
             }
             _ => unreachable!(),
         }
