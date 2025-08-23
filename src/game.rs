@@ -93,7 +93,7 @@ impl<'t> Game<'t> {
                 .run(&mut self.gi, delta_time, &mut self.canvas);
 
             self.canvas
-                .set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
+                .set_draw_color(sdl2::pixels::Color::RGB(172, 170, 192));
             self.canvas.present();
             self.canvas.clear();
         }
