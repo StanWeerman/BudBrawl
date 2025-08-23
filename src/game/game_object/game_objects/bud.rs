@@ -376,9 +376,7 @@ impl<'g> InitialBudData<'g> {
         for (i, effect) in self.effects.iter_mut().enumerate() {
             if effect.is_none() {
                 *effect = Some(Rc::clone(&new_effect));
-                // println!("Working");
                 if tex.is_some() {
-                    println!("Working");
                     self.effect_textures[i] = Some(Rc::clone(&tex.unwrap()));
                 }
                 break;
