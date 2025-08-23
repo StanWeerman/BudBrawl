@@ -17,14 +17,27 @@ use crate::game::{
 pub struct BudData<'g> {
     pub initial: InitialBudData<'g>,
     pub selected: bool,
+    pub max_health: u16,
     pub health: u16,
     pub speed: u16,
+    pub damage: u16,
 }
 
 impl<'g> BudData<'g> {
     pub fn remove_health(&mut self, dmg: u16) {
+        println!("Dealt {} dmg", dmg);
         if self.health >= dmg {
             self.health -= dmg;
+        } else if self.health < dmg {
+            self.health = 0;
+        }
+    }
+    pub fn add_health(&mut self, health: u16) {
+        println!("Healed {} dmg", health);
+        if self.health + health > self.max_health {
+            self.health = self.max_health;
+        } else {
+            self.health += health;
         }
     }
     pub fn select(&mut self) {
@@ -35,14 +48,18 @@ impl<'g> BudData<'g> {
     }
     pub fn reset(&mut self) {
         self.speed = self.initial.max_speed;
+        self.damage = 0;
+        self.max_health = self.initial.max_health;
     }
 
     pub fn default(initial: InitialBudData<'g>) -> BudData<'g> {
         BudData {
             initial,
             selected: false,
+            max_health: 10,
             health: 10,
-            speed: 20,
+            speed: 3,
+            damage: 0,
         }
     }
 }
@@ -55,7 +72,7 @@ pub struct InitialBudData<'g> {
     pub index: u8,
     pub team: u8,
     pub rounds: u64,
-    pub effects: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
+    pub effects: [Option<Box<dyn Effect<'g>>>; 3],
     pub effect_textures: [Option<Rc<Texture<'g>>>; 3],
     pub name: String,
     pub weapon_info: WeaponInfo<'g>,
@@ -79,25 +96,16 @@ impl<'g> InitialBudData<'g> {
             team,
             rounds: 0,
             effect_textures: [None, None, None],
-            effects: [
-                Some(Rc::new(RefCell::new(AuraEffect::new(Box::new(
-                    DamageEffect::new(10),
-                ))))),
-                None,
-                None,
-            ],
+            effects: [None, None, None],
+            //Some(Rc::new(RefCell::new(AuraEffect::new(Box::new(DamageEffect::new(10))))))
             name,
             weapon_info,
         }
     }
-    pub fn add_effect(
-        &mut self,
-        new_effect: Rc<RefCell<dyn Effect<'g> + 'g>>,
-        tex: Option<Rc<Texture<'g>>>,
-    ) {
+    pub fn add_effect(&mut self, new_effect: Box<dyn Effect<'g>>, tex: Option<Rc<Texture<'g>>>) {
         for (i, effect) in self.effects.iter_mut().enumerate() {
             if effect.is_none() {
-                *effect = Some(Rc::clone(&new_effect));
+                *effect = Some(new_effect);
                 if tex.is_some() {
                     self.effect_textures[i] = Some(Rc::clone(&tex.unwrap()));
                 }
