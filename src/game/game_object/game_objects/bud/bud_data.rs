@@ -10,6 +10,7 @@ use sdl2::{
 use crate::game::{
     camera::Camera,
     effect_system::effects::{aura_effect::AuraEffect, self_effect::DamageEffect, Effect},
+    game_object::game_objects::bud::weapon::Weapon,
     game_state::game_states::select_state::NameGenerator,
 };
 
@@ -57,6 +58,7 @@ pub struct InitialBudData<'g> {
     pub effects: [Option<Rc<RefCell<dyn Effect<'g> + 'g>>>; 3],
     pub effect_textures: [Option<Rc<Texture<'g>>>; 3],
     pub name: String,
+    pub weapon: Weapon,
 }
 
 impl<'g> InitialBudData<'g> {
@@ -75,7 +77,6 @@ impl<'g> InitialBudData<'g> {
             index,
             team,
             rounds: 0,
-
             effect_textures: [None, None, None],
             effects: [
                 Some(Rc::new(RefCell::new(AuraEffect::new(Box::new(
@@ -85,6 +86,7 @@ impl<'g> InitialBudData<'g> {
                 None,
             ],
             name,
+            weapon: Weapon::default(),
         }
     }
     pub fn add_effect(
@@ -105,6 +107,13 @@ impl<'g> InitialBudData<'g> {
     pub fn clear_effects(&mut self) {
         self.effects = [None, None, None];
         self.effect_textures = [None, None, None];
+    }
+    pub fn change_weapon(
+        &mut self,
+        weapon: Weapon,
+        // tex: Option<Rc<Texture<'g>>>,
+    ) {
+        self.weapon = weapon;
     }
 
     pub fn debug_effects(&self) {
@@ -142,6 +151,15 @@ impl<'g> InitialBudData<'g> {
             point.x as i16,
             point.y as i16,
             &format!("Team {} | Bud {}", self.team + 1, self.index + 1),
+            sdl2::pixels::Color::RGB(0, 0, 0),
+        );
+
+        let mut point = Point::new(20 * index as i32 + 1, 27);
+        camera.ui_point_to_camera(&mut point);
+        canvas.string(
+            point.x as i16,
+            point.y as i16,
+            &format!("Weapon: {:?}", self.weapon.weapon_enum),
             sdl2::pixels::Color::RGB(0, 0, 0),
         );
 
