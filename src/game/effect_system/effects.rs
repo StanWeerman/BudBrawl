@@ -4,7 +4,7 @@ use dyn_clone::DynClone;
 
 use crate::game::{
     collision_system::collisions::Colliding,
-    game_object::game_objects::bud::{Bud, BudData},
+    game_object::game_objects::bud::{bud_data::BudData, Bud},
 };
 
 pub mod aura_effect;

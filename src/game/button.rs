@@ -202,7 +202,7 @@ impl<'b, T> Button<'b> for HoverMenuButton<'b, T> {
         let (pressed, hovered) = self.get_pressed();
         let (mut rect, text) = self.get_draw_values();
         let mut text_rect = rect.clone();
-        rect.x += 2;
+        // rect.x += 2;
         rect.y += 2;
         rect.w -= 4;
         rect.h -= 4;

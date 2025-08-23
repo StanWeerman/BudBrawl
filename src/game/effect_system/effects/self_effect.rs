@@ -2,7 +2,7 @@ use std::{cell::RefCell, rc::Rc};
 
 use crate::game::{
     collision_system::collisions::Colliding, effect_system::effects::Effect,
-    game_object::game_objects::bud::BudData,
+    game_object::game_objects::bud::bud_data::BudData,
 };
 
 #[derive(Clone)]

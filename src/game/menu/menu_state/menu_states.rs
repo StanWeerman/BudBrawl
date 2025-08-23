@@ -2,7 +2,7 @@ use std::{cell::RefCell, cmp, collections::HashMap, hash::Hash, rc::Rc};
 
 use crate::game::{
     game_info::GameInfo,
-    game_object::game_objects::bud::{BudData, InitialBudData},
+    game_object::game_objects::bud::{bud_data::BudData, bud_data::InitialBudData},
     game_state::{game_states::select_state::SelectInfo, GameState},
     menu::menu_state::MenuState,
 };

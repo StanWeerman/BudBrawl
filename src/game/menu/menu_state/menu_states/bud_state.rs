@@ -5,7 +5,7 @@ use sdl2::{gfx::primitives::DrawRenderer, rect::Rect, render::Canvas, video::Win
 use crate::game::{
     button::{Button, MenuButton},
     game_info::GameInfo,
-    game_object::game_objects::bud::{Bud, BudData},
+    game_object::game_objects::bud::{bud_data::BudData, Bud},
     menu::menu_state::{
         menu_states::{BudEnum, MenuStateEnum},
         MenuState,
