@@ -431,7 +431,6 @@ impl<'g> InitialBudData<'g> {
             camera.ui_rect_to_camera(&mut rect);
             rect.x += 2;
             if let Some(effect_texture) = effect_texture {
-                println!("Working");
                 canvas.copy_ex(&effect_texture, None, rect, 0.0, None, false, false);
             } else if self.effects[i].is_some() {
                 canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
