@@ -146,6 +146,7 @@ pub struct HoverMenuButton<'t, T> {
     texture: Rc<Texture<'t>>,
     pub action: Box<dyn Fn(&mut T)>,
     pub hover_action: Box<dyn Fn(&mut T)>,
+    texture_only: bool,
 }
 impl<'t, T> HoverMenuButton<'t, T> {
     pub fn new(
@@ -169,6 +170,25 @@ impl<'t, T> HoverMenuButton<'t, T> {
             texture,
             action,
             hover_action,
+            texture_only: false,
+        }
+    }
+    pub fn new_texture_only(
+        rect: Rect,
+        text: &'static str,
+        texture: Rc<Texture<'t>>,
+        action: Box<dyn Fn(&mut T)>,
+        hover_action: Box<dyn Fn(&mut T)>,
+    ) -> Self {
+        Self {
+            pressed: false,
+            hovered: false,
+            rect,
+            text,
+            texture,
+            action,
+            hover_action,
+            texture_only: true,
         }
     }
 }
@@ -202,7 +222,12 @@ impl<'b, T> Button<'b> for HoverMenuButton<'b, T> {
         let (pressed, hovered) = self.get_pressed();
         let (mut rect, text) = self.get_draw_values();
         let mut text_rect = rect.clone();
-        // rect.x += 2;
+        if self.texture_only {
+            camera.ui_rect_to_camera(&mut rect);
+            canvas.copy_ex(&self.texture, None, rect, 0.0, None, false, false);
+            return;
+        }
+        rect.x += 2;
         rect.y += 2;
         rect.w -= 4;
         rect.h -= 4;
