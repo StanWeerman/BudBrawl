@@ -21,7 +21,10 @@ use sdl2::{
 use crate::game::{
     button::{Button, MenuButton},
     game_info::{make_map, GameInfo},
-    game_object::game_objects::bud::bud_data::InitialBudData,
+    game_object::game_objects::bud::{
+        bud_data::InitialBudData,
+        weapon::{WeaponEnum, WeaponInfo},
+    },
     game_state::{game_states::GameStateEnum, GameState},
     menu::menu_state::menu_states::{
         select_bud_state::SelectBudState, MenuStateEnum, MenuStateHandler,
@@ -32,6 +35,7 @@ pub struct SelectState<'g> {
     buttons: Vec<MenuButton<GameInfo<'g>>>,
     select_info: Rc<RefCell<SelectInfo<'g>>>,
     msh: MenuStateHandler<'g>,
+    weapon_released: bool,
 }
 
 pub struct SelectInfo<'g> {
@@ -41,6 +45,7 @@ pub struct SelectInfo<'g> {
     pub team: u8,
     pub done: bool,
     pub icon_textures: HashMap<String, Rc<Texture<'g>>>,
+    pub weapon_index: u8,
 }
 
 impl<'g> SelectInfo<'g> {
@@ -82,8 +87,10 @@ impl<'g> SelectState<'g> {
                 initial_buds_tuple: initial_buds_tuple.clone(),
                 done: false,
                 icon_textures: HashMap::new(),
+                weapon_index: 0,
             })),
             msh: MenuStateHandler::new(),
+            weapon_released: true,
         }
     }
     pub fn new_state(state: &GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g> {
@@ -100,6 +107,7 @@ impl<'g> SelectState<'g> {
         team: u8,
         tex: Rc<Texture<'g>>,
         name_generator: &NameGenerator,
+        weapon_tex: Rc<Texture<'g>>,
     ) {
         while initial_buds.len() < 5 {
             initial_buds.push(InitialBudData::default(
@@ -107,6 +115,7 @@ impl<'g> SelectState<'g> {
                 team,
                 initial_buds.len() as u8,
                 name_generator,
+                WeaponInfo::default(Rc::clone(&weapon_tex)),
             ));
         }
     }
@@ -133,17 +142,28 @@ impl<'g> GameState<'g> for SelectState<'g> {
             &["png", "jpg", "jpeg"],
         );
 
+        let sword_tex = Rc::new(
+            self.select_info
+                .borrow_mut()
+                .icon_textures
+                .get("sword")
+                .unwrap()
+                .clone(),
+        );
+
         Self::setup_buds(
             &mut self.select_info.borrow_mut().initial_buds_tuple.0,
             0,
             Rc::clone(&tex),
             &name_generator,
+            Rc::clone(&sword_tex),
         );
         Self::setup_buds(
             &mut self.select_info.borrow_mut().initial_buds_tuple.1,
             1,
             Rc::clone(&tex),
             &name_generator,
+            Rc::clone(&sword_tex),
         );
         self.msh.add_menu_states(Box::new([(
             MenuStateEnum::InitialBudDatas((Rc::clone(&self.select_info))),
@@ -173,6 +193,71 @@ impl<'g> GameState<'g> for SelectState<'g> {
         canvas.string(0, 0, "Select", sdl2::pixels::Color::RGB(0, 255, 0));
 
         self.msh.handle_state(gi, delta_time, canvas);
+
+        let mut weapon_index = 0;
+        let mut change_weapon = false;
+
+        if let Some(current_initial_bud_data) =
+            self.select_info.borrow_mut().get_current_initial_bud_data()
+        {
+            weapon_index = current_initial_bud_data
+                .weapon_info
+                .weapon
+                .weapon_enum
+                .get_index();
+
+            if gi.input.is_pressed(Keycode::Right) && self.weapon_released {
+                if weapon_index == 7 {
+                    weapon_index = 0;
+                } else {
+                    weapon_index += 1;
+                }
+                change_weapon = true;
+                self.weapon_released = false;
+            } else if gi.input.is_pressed(Keycode::Left) && self.weapon_released {
+                if weapon_index == 0 {
+                    weapon_index = 7;
+                } else {
+                    weapon_index -= 1;
+                }
+                change_weapon = true;
+                self.weapon_released = false;
+            } else if gi.input.is_released(Keycode::Left) && gi.input.is_released(Keycode::Right) {
+                change_weapon = false;
+                self.weapon_released = true;
+            } else {
+                change_weapon = false;
+            }
+        }
+
+        if change_weapon {
+            let (weapon, weapon_string, weapon_rect) = WeaponEnum::get_weapon(weapon_index);
+            let weapon_tex = Rc::clone(
+                self.select_info
+                    .borrow()
+                    .icon_textures
+                    .get(&weapon_string)
+                    .unwrap(),
+            );
+            if let Some(current_initial_bud_data) =
+                self.select_info.borrow_mut().get_current_initial_bud_data()
+            {
+                println!(
+                    "{:?}",
+                    (
+                        weapon_index,
+                        weapon_string,
+                        weapon_rect,
+                        &weapon.weapon_enum
+                    )
+                );
+                current_initial_bud_data.change_weapon(WeaponInfo::new(
+                    weapon,
+                    weapon_tex,
+                    weapon_rect,
+                ));
+            }
+        }
     }
 }
 
