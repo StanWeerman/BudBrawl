@@ -112,7 +112,10 @@ impl<'g> Bud<'g> {
     }
     fn attack(&mut self, collisions: &mut Collisions) {
         let attack_tile = self.position + self.direction.get_point();
-        if (collisions.impact_tile(attack_tile, Box::new(DamageEffect::new(10)))) {}
+        if (collisions.impact_tile(
+            attack_tile,
+            Box::new(DamageEffect::new(self.bud_data.borrow().damage)),
+        )) {}
     }
 
     pub fn move_bud(&mut self, moving: Point, collisions: &mut Collisions, delta_time: f32) {
@@ -136,9 +139,7 @@ impl<'g> Bud<'g> {
     pub fn apply_effects(&mut self, others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>) {
         for i in 0..3 {
             if let Some(new_effect) = self.bud_data.borrow_mut().initial.effects[i].clone() {
-                new_effect
-                    .borrow_mut()
-                    .apply(Rc::clone(&self.bud_data), others.clone());
+                self.effects.push(new_effect);
             }
         }
         self.effects

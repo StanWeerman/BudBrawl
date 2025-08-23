@@ -11,7 +11,9 @@ use sdl2::{
 use crate::game::{
     button::{Button, HoverMenuButton, MenuButton},
     camera::Camera,
-    effect_system::effects::self_effect::SelfEffect,
+    effect_system::effects::self_effect::{
+        BulwarkEffect, FighterEffect, MendingEffect, ScoutEffect, SelfEffect,
+    },
     game_info::GameInfo,
     game_object::game_objects::bud::{
         bud_data::{BudData, InitialBudData},
@@ -183,7 +185,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             select_info.get_current_initial_bud_data()
                         {
                             current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                                .add_effect(Box::new(FighterEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -204,7 +206,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             select_info.get_current_initial_bud_data()
                         {
                             current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                                .add_effect(Box::new(BulwarkEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -225,8 +227,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(ScoutEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -248,7 +249,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             select_info.get_current_initial_bud_data()
                         {
                             current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                                .add_effect(Box::new(MendingEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -270,7 +271,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             select_info.get_current_initial_bud_data()
                         {
                             current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                                .add_effect(Box::new(FighterEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -292,8 +293,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -315,8 +315,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -338,8 +337,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -362,7 +360,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             select_info.get_current_initial_bud_data()
                         {
                             current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                                .add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -385,7 +383,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             select_info.get_current_initial_bud_data()
                         {
                             current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                                .add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -407,8 +405,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -431,7 +428,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                             select_info.get_current_initial_bud_data()
                         {
                             current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                                .add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -453,8 +450,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -476,8 +472,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -499,8 +494,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
@@ -522,8 +516,7 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                         if let Some(current_initial_bud_data) =
                             select_info.get_current_initial_bud_data()
                         {
-                            current_initial_bud_data
-                                .add_effect(Rc::new(RefCell::new(SelfEffect::new())), tex);
+                            current_initial_bud_data.add_effect(Box::new(SelfEffect::new()), tex);
                         }
                     }),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
