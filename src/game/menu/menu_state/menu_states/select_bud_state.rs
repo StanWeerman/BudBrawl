@@ -126,50 +126,50 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                 self.select_info = Some(Rc::clone(select_info));
                 let select_info = select_info.borrow_mut();
 
-                self.trait_buttons.push(HoverMenuButton::new_texture_only(
-                    Rect::new(40, 0, 5, 15),
-                    "",
-                    Rc::clone(select_info.icon_textures.get("sword").unwrap()),
-                    Box::new(|select_info: &mut SelectInfo<'g>| {
-                        let tex = if let Some(tex) = select_info.icon_textures.get("sword") {
-                            Some(Rc::clone(tex))
-                        } else {
-                            None
-                        };
-                        if let Some(current_initial_bud_data) =
-                            select_info.get_current_initial_bud_data()
-                        {
-                            current_initial_bud_data.change_weapon(Weapon::default());
-                        }
-                    }),
-                    Box::new(|select_info: &mut SelectInfo<'g>| {
-                        select_info.trait_description =
-                            String::from("Strikes 2 tiles in front of bud for +3 damage.");
-                    }),
-                ));
+                // self.trait_buttons.push(HoverMenuButton::new_texture_only(
+                //     Rect::new(40, 0, 5, 15),
+                //     "",
+                //     Rc::clone(select_info.icon_textures.get("sword").unwrap()),
+                //     Box::new(|select_info: &mut SelectInfo<'g>| {
+                //         let tex = if let Some(tex) = select_info.icon_textures.get("sword") {
+                //             Some(Rc::clone(tex))
+                //         } else {
+                //             None
+                //         };
+                //         if let Some(current_initial_bud_data) =
+                //             select_info.get_current_initial_bud_data()
+                //         {
+                //             current_initial_bud_data.change_weapon(Weapon::default());
+                //         }
+                //     }),
+                //     Box::new(|select_info: &mut SelectInfo<'g>| {
+                //         select_info.trait_description =
+                //             String::from("Strikes 2 tiles in front of bud for +3 damage.");
+                //     }),
+                // ));
 
-                self.trait_buttons.push(HoverMenuButton::new_texture_only(
-                    Rect::new(60, 0, 10, 5),
-                    "",
-                    Rc::clone(select_info.icon_textures.get("bow").unwrap()),
-                    Box::new(|select_info: &mut SelectInfo<'g>| {
-                        let tex = if let Some(tex) = select_info.icon_textures.get("bow") {
-                            Some(Rc::clone(tex))
-                        } else {
-                            None
-                        };
-                        if let Some(current_initial_bud_data) =
-                            select_info.get_current_initial_bud_data()
-                        {
-                            current_initial_bud_data.change_weapon(Weapon::default());
-                        }
-                    }),
-                    Box::new(|select_info: &mut SelectInfo<'g>| {
-                        select_info.trait_description = String::from(
-                            "Bow - Hits within +6 tiles in front of bud for +1 damage.",
-                        );
-                    }),
-                ));
+                // self.trait_buttons.push(HoverMenuButton::new_texture_only(
+                //     Rect::new(60, 0, 10, 5),
+                //     "",
+                //     Rc::clone(select_info.icon_textures.get("bow").unwrap()),
+                //     Box::new(|select_info: &mut SelectInfo<'g>| {
+                //         let tex = if let Some(tex) = select_info.icon_textures.get("bow") {
+                //             Some(Rc::clone(tex))
+                //         } else {
+                //             None
+                //         };
+                //         if let Some(current_initial_bud_data) =
+                //             select_info.get_current_initial_bud_data()
+                //         {
+                //             current_initial_bud_data.change_weapon(Weapon::default());
+                //         }
+                //     }),
+                //     Box::new(|select_info: &mut SelectInfo<'g>| {
+                //         select_info.trait_description = String::from(
+                //             "Bow - Hits within +6 tiles in front of bud for +1 damage.",
+                //         );
+                //     }),
+                // ));
 
                 self.trait_buttons.push(HoverMenuButton::new(
                     Rect::new(20, 20, 12, 12),
@@ -349,9 +349,9 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                 self.trait_buttons.push(HoverMenuButton::new(
                     Rect::new(40, 20, 10, 10),
                     "Inspiring",
-                    Rc::clone(select_info.icon_textures.get("emergency").unwrap()),
+                    Rc::clone(select_info.icon_textures.get("inspiring").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
-                        let tex = if let Some(tex) = select_info.icon_textures.get("emergency") {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("inspiring") {
                             Some(Rc::clone(tex))
                         } else {
                             None

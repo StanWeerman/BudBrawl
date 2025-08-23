@@ -10,7 +10,7 @@ use sdl2::{
 use crate::game::{
     camera::Camera,
     effect_system::effects::{aura_effect::AuraEffect, self_effect::DamageEffect, Effect},
-    game_object::game_objects::bud::weapon::Weapon,
+    game_object::game_objects::bud::weapon::{Weapon, WeaponInfo},
     game_state::game_states::select_state::NameGenerator,
 };
 
@@ -75,7 +75,7 @@ pub struct InitialBudData<'g> {
     pub effects: [Option<Box<dyn Effect<'g>>>; 3],
     pub effect_textures: [Option<Rc<Texture<'g>>>; 3],
     pub name: String,
-    pub weapon: Weapon,
+    pub weapon_info: WeaponInfo<'g>,
 }
 
 impl<'g> InitialBudData<'g> {
@@ -84,6 +84,7 @@ impl<'g> InitialBudData<'g> {
         team: u8,
         index: u8,
         name_generator: &NameGenerator,
+        weapon_info: WeaponInfo<'g>,
     ) -> InitialBudData<'g> {
         let name = name_generator.selectRandName();
 
@@ -98,7 +99,7 @@ impl<'g> InitialBudData<'g> {
             effects: [None, None, None],
             //Some(Rc::new(RefCell::new(AuraEffect::new(Box::new(DamageEffect::new(10))))))
             name,
-            weapon: Weapon::default(),
+            weapon_info,
         }
     }
     pub fn add_effect(&mut self, new_effect: Box<dyn Effect<'g>>, tex: Option<Rc<Texture<'g>>>) {
@@ -118,10 +119,10 @@ impl<'g> InitialBudData<'g> {
     }
     pub fn change_weapon(
         &mut self,
-        weapon: Weapon,
+        weapon_info: WeaponInfo<'g>,
         // tex: Option<Rc<Texture<'g>>>,
     ) {
-        self.weapon = weapon;
+        self.weapon_info = weapon_info;
     }
 
     pub fn debug_effects(&self) {
@@ -162,13 +163,17 @@ impl<'g> InitialBudData<'g> {
             sdl2::pixels::Color::RGB(0, 0, 0),
         );
 
-        let mut point = Point::new(20 * index as i32 + 1, 27);
-        camera.ui_point_to_camera(&mut point);
-        canvas.string(
-            point.x as i16,
-            point.y as i16,
-            &format!("Weapon: {:?}", self.weapon.weapon_enum),
-            sdl2::pixels::Color::RGB(0, 0, 0),
+        let mut weapon_rect = self.weapon_info.weapon_rect.clone();
+        camera.ui_rect_to_camera(&mut weapon_rect);
+        weapon_rect.x *= index;
+        canvas.copy_ex(
+            &self.weapon_info.weapon_texture,
+            None,
+            weapon_rect,
+            0.0,
+            None,
+            false,
+            false,
         );
 
         for (i, effect_texture) in self.effect_textures.iter().enumerate() {
