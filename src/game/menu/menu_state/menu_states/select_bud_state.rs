@@ -349,9 +349,9 @@ impl<'g> MenuState<'g> for SelectBudState<'g> {
                 self.trait_buttons.push(HoverMenuButton::new(
                     Rect::new(40, 20, 10, 10),
                     "Inspiring",
-                    Rc::clone(select_info.icon_textures.get("emergency").unwrap()),
+                    Rc::clone(select_info.icon_textures.get("inspiring").unwrap()),
                     Box::new(|select_info: &mut SelectInfo<'g>| {
-                        let tex = if let Some(tex) = select_info.icon_textures.get("emergency") {
+                        let tex = if let Some(tex) = select_info.icon_textures.get("inspiring") {
                             Some(Rc::clone(tex))
                         } else {
                             None
