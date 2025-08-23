@@ -123,22 +123,10 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 }
                 button.draw(canvas, &gi.camera);
             }
-            canvas.string(
-                200,
-                750,
-                &bud_data.borrow().initial.name,
-                sdl2::pixels::Color::RGB(0, 0, 0),
-            );
-            canvas.string(
-                200,
-                800,
-                &format!(
-                    "Team {} | Bud {}",
-                    bud_data.borrow().initial.team + 1,
-                    bud_data.borrow().initial.index + 1
-                ),
-                sdl2::pixels::Color::RGB(0, 0, 0),
-            );
+            bud_data
+                .borrow()
+                .initial
+                .draw_initial_bud_data(0, canvas, &gi.camera);
         }
         if let Some(bud_data) = &mut self.bud_data_right {
             for button in self.buttons_right.iter_mut() {
@@ -150,22 +138,10 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 }
                 button.draw(canvas, &gi.camera);
             }
-            canvas.string(
-                800,
-                750,
-                &bud_data.borrow().initial.name,
-                sdl2::pixels::Color::RGB(0, 0, 0),
-            );
-            canvas.string(
-                800,
-                800,
-                &format!(
-                    "Team {} | Bud {}",
-                    bud_data.borrow().initial.team + 1,
-                    bud_data.borrow().initial.index + 1
-                ),
-                sdl2::pixels::Color::RGB(0, 0, 0),
-            );
+            bud_data
+                .borrow()
+                .initial
+                .draw_initial_bud_data(4, canvas, &gi.camera);
         }
         hover
     }

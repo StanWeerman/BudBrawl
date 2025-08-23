@@ -16,7 +16,8 @@ impl SelfEffect {
 
 impl<'g> Effect<'g> for SelfEffect {
     fn is_active(&self) -> bool {
-        todo!()
+        // todo!()
+        true
     }
 
     fn apply(
@@ -24,7 +25,7 @@ impl<'g> Effect<'g> for SelfEffect {
         bud: Rc<RefCell<BudData<'g>>>,
         others: Vec<Rc<RefCell<dyn Colliding<'g> + 'g>>>,
     ) {
-        todo!()
+        // todo!()
     }
 }
 
