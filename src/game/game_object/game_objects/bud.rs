@@ -40,7 +40,7 @@ pub mod weapon;
 
 pub struct Bud<'g> {
     position: Point,
-    bud_data: Rc<RefCell<BudData<'g>>>,
+    pub bud_data: Rc<RefCell<BudData<'g>>>,
     hovered: bool,
     pressed: bool,
     effects: Vec<Box<dyn Effect<'g> + 'g>>,

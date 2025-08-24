@@ -18,12 +18,21 @@ use crate::{
         game_info::GameInfo,
         game_object::{
             game_objects::{
-                bud::{bud_data::InitialBudData, Bud},
+                bud::{
+                    bud_data::{BudData, InitialBudData},
+                    Bud,
+                },
                 ground::Ground,
             },
             GameObject,
         },
-        game_state::{game_states::GameStateEnum, GameState, StateInfo},
+        game_state::{
+            game_states::{
+                arena_state::game_modes::{death_match::DeathMatch, GameMode},
+                GameStateEnum,
+            },
+            GameState, StateInfo,
+        },
         menu::menu_state::menu_states::{
             bud_state::BudState, BudEnum, MenuStateEnum, MenuStateHandler,
         },
@@ -32,6 +41,8 @@ use crate::{
     },
     vector2d::Vector2d,
 };
+
+pub mod game_modes;
 
 pub struct ArenaState<'g> {
     button: MenuButton<GameInfo<'g>>,
@@ -43,6 +54,7 @@ pub struct ArenaState<'g> {
     view: View,
     end_turn: bool,
     initial_buds_tuple: (Vec<InitialBudData<'g>>, Vec<InitialBudData<'g>>),
+    game_mode: DeathMatch,
 }
 
 impl<'g> ArenaState<'g> {
@@ -64,6 +76,7 @@ impl<'g> ArenaState<'g> {
             view: View::new(),
             end_turn: true,
             initial_buds_tuple: initial_buds_tuple.clone(),
+            game_mode: DeathMatch::random(),
         }
     }
     pub fn new_state(state: &GameStateEnum<'g>) -> Box<dyn GameState<'g> + 'g> {
@@ -84,6 +97,8 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         canvas: &mut Canvas<Window>,
         event_pump: &mut EventPump,
     ) {
+        println!("{:?}", self.game_mode);
+
         const X_SIZE: u32 = 100;
         const Y_SIZE: u32 = 100;
         let mut texture = gi
@@ -111,6 +126,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         // Team 0
         for (i, initial_bud_data) in self.initial_buds_tuple.0.iter().enumerate() {
             let mut bud = Bud::new(Point::new(0, i as i32), initial_bud_data.clone());
+            self.si.bud_data_tuple.0.push(Rc::clone(&bud.bud_data));
             let _bud = Rc::new(RefCell::new(bud));
             let __bud = Rc::clone(&_bud);
             let ___bud = Rc::clone(&__bud);
@@ -123,6 +139,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         // Team 1
         for (i, initial_bud_data) in self.initial_buds_tuple.1.iter().enumerate() {
             let mut bud = Bud::new(Point::new(10, i as i32), initial_bud_data.clone());
+            self.si.bud_data_tuple.1.push(Rc::clone(&bud.bud_data));
             let _bud = Rc::new(RefCell::new(bud));
             let __bud = Rc::clone(&_bud);
             let ___bud = Rc::clone(&__bud);
@@ -131,6 +148,9 @@ impl<'g> GameState<'g> for ArenaState<'g> {
             self.scene_manager.add(_bud);
             self.collisions.add(___bud);
         }
+
+        self.initial_buds_tuple.0.drain(0..);
+        self.initial_buds_tuple.1.drain(0..);
 
         self.msh.add_menu_states(Box::new([(
             MenuStateEnum::Bud(BudEnum::LeftBud(None)),
@@ -188,9 +208,11 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         canvas.string(0, 0, "Arena", sdl2::pixels::Color::RGB(0, 255, 0));
 
         if gi.input.is_pressed(Keycode::R) {
-            gi.game_state_handler
-                .new_state(GameStateEnum::Select(self.initial_buds_tuple.clone()));
+            self.si.end_round(gi);
         }
+
+        self.game_mode
+            .check_done(&mut self.collisions, gi, &mut self.si);
     }
 }
 

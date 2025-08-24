@@ -52,6 +52,30 @@ impl<'g> BudData<'g> {
         self.max_health = self.initial.max_health;
     }
 
+    pub fn alive(&self) -> bool {
+        self.health > 0
+    }
+
+    pub fn draw_bud_data(&self, index: i32, canvas: &mut Canvas<Window>, camera: &Camera) {
+        canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+        let mut point = Point::new(20 * index as i32 + 1, 80);
+        camera.ui_point_to_camera(&mut point);
+        canvas.string(
+            point.x as i16,
+            point.y as i16,
+            &format!("Health: {}/{}", self.health, self.initial.max_health),
+            sdl2::pixels::Color::RGB(0, 0, 0),
+        );
+        let mut point = Point::new(20 * index as i32 + 1, 82);
+        camera.ui_point_to_camera(&mut point);
+        canvas.string(
+            point.x as i16,
+            point.y as i16,
+            &format!("Speed: {}/{}", self.speed, self.initial.max_speed),
+            sdl2::pixels::Color::RGB(0, 0, 0),
+        );
+    }
+
     pub fn default(initial: InitialBudData<'g>) -> BudData<'g> {
         BudData {
             initial,
@@ -125,16 +149,11 @@ impl<'g> InitialBudData<'g> {
         self.weapon_info = weapon_info;
     }
 
-    pub fn debug_effects(&self) {
-        for effect in self.effects.iter() {
-            if effect.is_none() {
-                print!("None ");
-            } else {
-                print!("Some ");
-            }
-        }
-        println!();
+    pub fn new_round(&mut self, index: u8) {
+        self.rounds += 1;
+        self.index = index;
     }
+
     pub fn draw_initial_bud_data(&self, index: i32, canvas: &mut Canvas<Window>, camera: &Camera) {
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         let mut rect = Rect::new(20 * index as i32, 20, 20, 60);
@@ -160,6 +179,15 @@ impl<'g> InitialBudData<'g> {
             point.x as i16,
             point.y as i16,
             &format!("Team {} | Bud {}", self.team + 1, self.index + 1),
+            sdl2::pixels::Color::RGB(0, 0, 0),
+        );
+
+        let mut point = Point::new(20 * index as i32 + 1, 27);
+        camera.ui_point_to_camera(&mut point);
+        canvas.string(
+            point.x as i16,
+            point.y as i16,
+            &format!("Lived for {} Rounds", self.rounds),
             sdl2::pixels::Color::RGB(0, 0, 0),
         );
 

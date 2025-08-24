@@ -127,6 +127,7 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 .borrow()
                 .initial
                 .draw_initial_bud_data(0, canvas, &gi.camera);
+            bud_data.borrow().draw_bud_data(0, canvas, &gi.camera);
         }
         if let Some(bud_data) = &mut self.bud_data_right {
             for button in self.buttons_right.iter_mut() {
@@ -142,6 +143,7 @@ impl<'g> MenuState<'g> for BudState<'g> {
                 .borrow()
                 .initial
                 .draw_initial_bud_data(4, canvas, &gi.camera);
+            bud_data.borrow().draw_bud_data(4, canvas, &gi.camera);
         }
         hover
     }
