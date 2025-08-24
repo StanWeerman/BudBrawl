@@ -1,9 +1,8 @@
 use rand::Rng;
 
 use crate::game::{
-    collision_system::collisions::Collisions,
-    game_info::GameInfo,
-    game_state::{game_states::arena_state::game_modes::GameMode, StateInfo},
+    collision_system::collisions::Collisions, game_info::GameInfo, game_state::StateInfo,
+    turn_system::game_modes::GameMode,
 };
 
 #[derive(Debug)]

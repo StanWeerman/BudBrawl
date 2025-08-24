@@ -28,22 +28,17 @@ use crate::{
             GameObject,
         },
         game_state::{
-            game_states::{
-                arena_state::game_modes::{death_match::DeathMatch, GameMode},
-                GameStateEnum,
-            },
+            game_states::{arena_state, GameStateEnum},
             GameState, StateInfo,
         },
         menu::menu_state::menu_states::{
             bud_state::BudState, BudEnum, MenuStateEnum, MenuStateHandler,
         },
         scene_manager::SceneManager,
-        turn_system::turns::TurnHandler,
+        turn_system::{game_modes::death_match::DeathMatch, turns::TurnHandler},
     },
     vector2d::Vector2d,
 };
-
-pub mod game_modes;
 
 pub struct ArenaState<'g> {
     button: MenuButton<GameInfo<'g>>,
@@ -182,6 +177,7 @@ impl<'g> GameState<'g> for ArenaState<'g> {
                 gi,
                 &mut self.si,
                 &mut self.msh,
+                &mut self.game_mode,
             );
             println!("?");
             self.end_turn = false;
@@ -226,9 +222,6 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         if gi.input.is_pressed(Keycode::R) {
             self.si.end_round(gi);
         }
-
-        self.game_mode
-            .check_done(&mut self.collisions, gi, &mut self.si);
     }
 }
 

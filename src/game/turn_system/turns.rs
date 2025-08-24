@@ -6,6 +6,8 @@ use crate::game::game_info::GameInfo;
 use crate::game::game_state::StateInfo;
 use crate::game::menu::menu_state::menu_states::MenuStateHandler;
 use crate::game::scene_manager::Object;
+use crate::game::turn_system::game_modes::death_match::DeathMatch;
+use crate::game::turn_system::game_modes::GameMode;
 
 pub struct TurnHandler<'g> {
     object_list: VecDeque<Rc<RefCell<Object<'g>>>>,
@@ -26,11 +28,13 @@ impl<'g> TurnHandler<'g> {
         gi: &mut GameInfo<'g>,
         si: &mut StateInfo<'g>,
         msh: &mut MenuStateHandler<'g>,
+        game_mode: &mut DeathMatch,
     ) {
         let ending = self.current.clone();
         match ending {
             Some(val) => {
                 let did_turn = val.borrow_mut().end(_delta_time, collisions, gi, si, msh);
+                game_mode.check_done(collisions, gi, si);
                 if did_turn {
                     self.add(val);
                 } else {

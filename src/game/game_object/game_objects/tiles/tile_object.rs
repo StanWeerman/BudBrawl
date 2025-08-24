@@ -60,11 +60,11 @@ impl<'g> GameObject<'g> for TileObject<'g> {
     fn draw(&self, canvas: &mut Canvas<Window>, camera: &mut Camera) {
         // unsafe { CANVAS.set_draw_color(Color::RGBA(139, 210, 241, 255)) };
         canvas.set_draw_color(Color::RGBA(139, 210, 241, 255));
-        println!(
-            "pos: {}, {}",
-            self.position.borrow().x,
-            self.position.borrow().y
-        );
+        // println!(
+        //     "pos: {}, {}",
+        //     self.position.borrow().x,
+        //     self.position.borrow().y
+        // );
 
         let mut some_rect = Rect::from_center(
             Point::new(
@@ -110,7 +110,7 @@ impl<'r> Colliding<'r> for TileObject<'r> {
         effect: Box<dyn crate::game::effect_system::effects::Effect<'r> + 'r>,
         others: Vec<Rc<RefCell<dyn Colliding<'r> + 'r>>>,
     ) {
-        todo!()
+        // todo!()
     }
 }
 
