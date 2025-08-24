@@ -29,6 +29,7 @@ pub mod scene_manager;
 pub mod menu;
 
 pub mod button;
+mod creating_levels;
 
 use game_info::GameInfo;
 

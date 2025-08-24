@@ -15,6 +15,7 @@ use crate::{
     game::{
         button::{Button, MenuButton},
         collision_system::collisions::Collisions,
+        creating_levels::map::Map,
         game_info::GameInfo,
         game_object::{
             game_objects::{
@@ -101,6 +102,14 @@ impl<'g> GameState<'g> for ArenaState<'g> {
 
         const X_SIZE: u32 = 100;
         const Y_SIZE: u32 = 100;
+
+        let test_map = Map::new(vec!["rule_set_1.tmr", "rule_set_2.tmr"], "tile_map_2.tm");
+        let tex = Rc::new(RefCell::new(
+            gi.texture_creator
+                .load_texture(&"assets/tile_map/textures/bud_brawl_tiles.png")
+                .unwrap(),
+        ));
+        let mut tiles = test_map.make_tile_objects(tex);
         let mut texture = gi
             .texture_creator
             .create_texture_streaming(PixelFormatEnum::RGB24, X_SIZE, Y_SIZE)
@@ -120,6 +129,13 @@ impl<'g> GameState<'g> for ArenaState<'g> {
         let ground = Ground::new(Vector2d::new(0.0, 0.0), ground_tex);
         let _ground = Rc::new(RefCell::new(ground));
         self.scene_manager.add(_ground);
+        for tile in tiles {
+            let tile = Rc::new(RefCell::new(tile));
+            let _tile = Rc::clone(&tile);
+            let __tile = Rc::clone(&tile);
+            self.collisions.add(__tile);
+            self.scene_manager.add(_tile);
+        }
 
         // let initial_bud_data = Rc::new(InitialBudData::default(tex.clone()));
 
